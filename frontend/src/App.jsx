@@ -122,22 +122,37 @@ const skillCategories = [
 const featuredProjects = [
   {
     title: "E-Commerce Platform",
-    description: "A full-stack e-commerce solution with real-time inventory management, secure payments, and an intuitive admin dashboard.",
-    technologies: ["Next.js", "Node.js", "PostgreSQL", "Stripe", "Tailwind"],
+    description: "A full-featured e-commerce solution with real-time inventory, secure payments, and admin dashboard. Built for scale with modern architecture.",
+    image: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800&h=500&fit=crop",
+    icon: "🛒",
+    technologies: ["React", "Node.js", "MongoDB", "Stripe"],
     github: "#",
     live: "#"
   },
   {
-    title: "Task Management App",
-    description: "Cross-platform mobile app built with Flutter featuring offline-first architecture, real-time sync, and beautiful animations.",
-    technologies: ["Flutter", "Dart", "Firebase", "Provider", "SQLite"],
+    title: "Health & Fitness App",
+    description: "Cross-platform mobile app for tracking workouts, nutrition, and health metrics with personalized recommendations.",
+    image: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&h=500&fit=crop",
+    icon: "💪",
+    technologies: ["Flutter", "Dart", "Firebase", "ML Kit"],
     github: "#",
     live: "#"
   },
   {
-    title: "Portfolio Generator",
-    description: "A web application that helps developers create stunning portfolios with customizable themes and components.",
-    technologies: ["React", "TypeScript", "Framer Motion", "Tailwind"],
+    title: "Real Estate Platform",
+    description: "Property listing and management platform with virtual tours, advanced search, and real-time chat with agents.",
+    image: "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800&h=500&fit=crop",
+    icon: "🏠",
+    technologies: ["Next.js", "PostgreSQL", "Prisma", "AWS"],
+    github: "#",
+    live: "#"
+  },
+  {
+    title: "AI Chat Assistant",
+    description: "Intelligent chatbot with natural language processing, context awareness, and multi-language support.",
+    image: "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&h=500&fit=crop",
+    icon: "🤖",
+    technologies: ["Python", "OpenAI", "FastAPI", "Redis"],
     github: "#",
     live: "#"
   }
@@ -598,63 +613,185 @@ function ProjectsSection() {
         animate={isInView ? "visible" : "hidden"}
         style={{ maxWidth: '1200px', margin: '0 auto' }}
       >
-        <SectionHeader number="03" title="Featured Projects" />
+        {/* Section Header */}
+        <div style={{ textAlign: 'center', marginBottom: '64px' }}>
+          <motion.span
+            className="font-mono"
+            style={{ color: 'var(--accent)', fontSize: '0.875rem', display: 'block', marginBottom: '16px' }}
+          >
+            03. My Work
+          </motion.span>
+          <h2 style={{ fontSize: 'clamp(2rem, 5vw, 3rem)', fontWeight: 700, marginBottom: '16px' }}>
+            Featured <span className="text-gradient">work</span>
+          </h2>
+          <p style={{ color: 'var(--text-secondary)', maxWidth: '600px', margin: '0 auto', fontSize: '1.125rem' }}>
+            A selection of projects that showcase my skills in full-stack development and mobile applications
+          </p>
+        </div>
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '80px', marginBottom: '80px' }}>
+        {/* Project Cards Grid */}
+        <motion.div
+          variants={staggerContainer}
+          initial="hidden"
+          animate={isInView ? "visible" : "hidden"}
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))',
+            gap: '32px',
+            marginBottom: '80px'
+          }}
+        >
           {featuredProjects.map((project, i) => (
             <motion.div
               key={project.title}
-              variants={i % 2 === 0 ? fadeInLeft : fadeInRight}
-              initial="hidden"
-              animate={isInView ? "visible" : "hidden"}
-              transition={{ delay: i * 0.2 }}
-              style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '32px', alignItems: 'center' }}
+              variants={staggerItem}
+              whileHover={{ y: -8, transition: { duration: 0.3 } }}
+              style={{
+                borderRadius: '20px',
+                overflow: 'hidden',
+                background: 'var(--bg-secondary)',
+                border: '1px solid var(--border)',
+                cursor: 'default'
+              }}
             >
-              <motion.div
-                className="glass"
-                whileHover={{ scale: 1.02, transition: { duration: 0.3 } }}
-                style={{ aspectRatio: '16/10', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'linear-gradient(135deg, hsl(187 94% 43% / 0.1), hsl(187 94% 43% / 0.02))', order: i % 2 === 1 ? 2 : 1 }}
-              >
-                <motion.span
-                  animate={{ scale: [1, 1.1, 1] }}
-                  transition={{ duration: 2, repeat: Infinity, repeatType: "reverse" }}
-                  style={{ fontSize: '4rem', color: 'hsl(187 94% 43% / 0.3)' }}
-                >
-                  {i + 1}
-                </motion.span>
-              </motion.div>
-              <div style={{ order: i % 2 === 1 ? 1 : 2, textAlign: i % 2 === 1 ? 'right' : 'left' }}>
-                <motion.span
-                  initial={{ opacity: 0 }}
-                  animate={isInView ? { opacity: 1 } : {}}
-                  transition={{ delay: i * 0.2 + 0.3 }}
-                  className="font-mono"
-                  style={{ color: 'var(--accent)', fontSize: '0.875rem' }}
-                >
-                  Featured Project
-                </motion.span>
-                <h3 style={{ fontSize: '1.5rem', fontWeight: 700, marginTop: '8px', marginBottom: '16px' }}>{project.title}</h3>
-                <motion.div
-                  whileHover={{ x: i % 2 === 1 ? -5 : 5 }}
-                  className="glass"
-                  style={{ padding: '24px', borderRadius: '12px', marginBottom: '16px' }}
-                >
-                  <p style={{ color: 'var(--text-secondary)' }}>{project.description}</p>
-                </motion.div>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px', marginBottom: '24px', justifyContent: i % 2 === 1 ? 'flex-end' : 'flex-start' }}>
+              {/* Image Container */}
+              <div style={{
+                position: 'relative',
+                height: '220px',
+                overflow: 'hidden'
+              }}>
+                <img
+                  src={project.image}
+                  alt={project.title}
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover',
+                    transition: 'transform 0.5s ease'
+                  }}
+                  onMouseOver={(e) => e.target.style.transform = 'scale(1.05)'}
+                  onMouseOut={(e) => e.target.style.transform = 'scale(1)'}
+                />
+                {/* Gradient Overlay */}
+                <div style={{
+                  position: 'absolute',
+                  inset: 0,
+                  background: 'linear-gradient(to top, hsl(222 47% 5% / 0.8) 0%, transparent 50%)'
+                }} />
+                {/* Icon Badge */}
+                <div style={{
+                  position: 'absolute',
+                  top: '16px',
+                  left: '16px',
+                  width: '48px',
+                  height: '48px',
+                  borderRadius: '12px',
+                  background: 'hsl(222 47% 12% / 0.9)',
+                  backdropFilter: 'blur(10px)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '1.5rem',
+                  border: '1px solid hsl(222 30% 20%)'
+                }}>
+                  {project.icon}
+                </div>
+              </div>
+
+              {/* Content */}
+              <div style={{ padding: '24px' }}>
+                <h3 style={{
+                  fontSize: '1.25rem',
+                  fontWeight: 700,
+                  marginBottom: '12px',
+                  color: 'var(--text-primary)'
+                }}>
+                  {project.title}
+                </h3>
+                <p style={{
+                  color: 'var(--text-secondary)',
+                  fontSize: '0.95rem',
+                  lineHeight: 1.6,
+                  marginBottom: '20px'
+                }}>
+                  {project.description}
+                </p>
+
+                {/* Technology Tags */}
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '24px' }}>
                   {project.technologies.map(tech => (
-                    <span key={tech} className="font-mono" style={{ color: 'var(--text-secondary)', fontSize: '0.875rem' }}>{tech}</span>
+                    <span
+                      key={tech}
+                      style={{
+                        padding: '6px 14px',
+                        borderRadius: '20px',
+                        background: 'hsl(187 94% 43% / 0.1)',
+                        color: 'var(--accent)',
+                        fontSize: '0.8rem',
+                        fontWeight: 500,
+                        border: '1px solid hsl(187 94% 43% / 0.2)'
+                      }}
+                    >
+                      {tech}
+                    </span>
                   ))}
                 </div>
-                <div style={{ display: 'flex', gap: '16px', justifyContent: i % 2 === 1 ? 'flex-end' : 'flex-start' }}>
-                  <motion.a whileHover={{ scale: 1.2, rotate: 5 }} href={project.github} style={{ color: 'var(--text-primary)' }}><Github size={22} /></motion.a>
-                  {project.live && <motion.a whileHover={{ scale: 1.2, rotate: -5 }} href={project.live} style={{ color: 'var(--text-primary)' }}><ExternalLink size={22} /></motion.a>}
+
+                {/* Action Buttons */}
+                <div style={{ display: 'flex', gap: '12px' }}>
+                  <motion.a
+                    href={project.live}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    style={{
+                      flex: 1,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '8px',
+                      padding: '12px 20px',
+                      background: 'hsl(187 94% 43%)',
+                      color: 'hsl(222 47% 5%)',
+                      borderRadius: '10px',
+                      fontWeight: 600,
+                      fontSize: '0.9rem',
+                      textDecoration: 'none',
+                      border: 'none'
+                    }}
+                  >
+                    <ExternalLink size={16} />
+                    Live Demo
+                  </motion.a>
+                  <motion.a
+                    href={project.github}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    style={{
+                      flex: 1,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '8px',
+                      padding: '12px 20px',
+                      background: 'var(--bg-card)',
+                      color: 'var(--text-primary)',
+                      borderRadius: '10px',
+                      fontWeight: 600,
+                      fontSize: '0.9rem',
+                      textDecoration: 'none',
+                      border: '1px solid var(--border)'
+                    }}
+                  >
+                    <Github size={16} />
+                    Code
+                  </motion.a>
                 </div>
               </div>
             </motion.div>
           ))}
-        </div>
+        </motion.div>
 
+        {/* Other Projects */}
         <motion.h3
           variants={fadeInUp}
           initial="hidden"
@@ -667,27 +804,53 @@ function ProjectsSection() {
           variants={staggerContainer}
           initial="hidden"
           animate={isInView ? "visible" : "hidden"}
-          style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '16px' }}
+          style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '20px' }}
         >
           {otherProjects.map((project, i) => (
             <motion.div
               key={project.title}
               variants={staggerItem}
-              whileHover={{ y: -10, transition: { duration: 0.3 } }}
-              className="glass"
-              style={{ padding: '24px', borderRadius: '12px', cursor: 'default' }}
+              whileHover={{ y: -8, transition: { duration: 0.3 } }}
+              style={{
+                padding: '28px',
+                borderRadius: '16px',
+                background: 'var(--bg-secondary)',
+                border: '1px solid var(--border)'
+              }}
             >
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
                 <motion.div whileHover={{ rotate: 15 }}>
                   <Folder size={40} style={{ color: 'var(--accent)' }} />
                 </motion.div>
-                <motion.a whileHover={{ scale: 1.2 }} href={project.github} style={{ color: 'var(--text-secondary)' }}><Github size={20} /></motion.a>
+                <motion.a
+                  whileHover={{ scale: 1.2 }}
+                  href={project.github}
+                  style={{ color: 'var(--text-secondary)', padding: '8px' }}
+                >
+                  <Github size={20} />
+                </motion.a>
               </div>
-              <h4 style={{ fontSize: '1.125rem', fontWeight: 600, marginBottom: '8px' }}>{project.title}</h4>
-              <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', marginBottom: '16px' }}>{project.description}</p>
+              <h4 style={{ fontSize: '1.125rem', fontWeight: 600, marginBottom: '12px', color: 'var(--text-primary)' }}>
+                {project.title}
+              </h4>
+              <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginBottom: '20px', lineHeight: 1.6 }}>
+                {project.description}
+              </p>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
                 {project.technologies.map(tech => (
-                  <span key={tech} className="font-mono" style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>{tech}</span>
+                  <span
+                    key={tech}
+                    className="font-mono"
+                    style={{
+                      fontSize: '0.75rem',
+                      color: 'var(--text-secondary)',
+                      padding: '4px 10px',
+                      background: 'var(--bg-card)',
+                      borderRadius: '6px'
+                    }}
+                  >
+                    {tech}
+                  </span>
                 ))}
               </div>
             </motion.div>
