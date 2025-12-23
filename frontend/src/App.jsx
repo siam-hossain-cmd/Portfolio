@@ -4,6 +4,63 @@ import { Github, Linkedin, Mail, Download, ArrowDown, ExternalLink, Code2, Smart
 import axios from 'axios'
 import API_URL from './config/api'
 
+// Animation Variants for enhanced scroll animations
+const fadeInUp = {
+  hidden: { opacity: 0, y: 60 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] }
+  }
+}
+
+const fadeInLeft = {
+  hidden: { opacity: 0, x: -60 },
+  visible: {
+    opacity: 1,
+    x: 0,
+    transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] }
+  }
+}
+
+const fadeInRight = {
+  hidden: { opacity: 0, x: 60 },
+  visible: {
+    opacity: 1,
+    x: 0,
+    transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] }
+  }
+}
+
+const scaleIn = {
+  hidden: { opacity: 0, scale: 0.8 },
+  visible: {
+    opacity: 1,
+    scale: 1,
+    transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] }
+  }
+}
+
+const staggerContainer = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+      delayChildren: 0.2
+    }
+  }
+}
+
+const staggerItem = {
+  hidden: { opacity: 0, y: 30 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] }
+  }
+}
+
 // Roles for typewriter effect
 const roles = [
   "Software Engineering Student",
@@ -311,36 +368,61 @@ function AboutSection() {
 
   return (
     <section id="about" ref={ref} style={{ padding: '100px 24px' }}>
-      <motion.div initial={{ opacity: 0, y: 40 }} animate={isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6 }} style={{ maxWidth: '1200px', margin: '0 auto' }}>
+      <motion.div
+        variants={fadeInUp}
+        initial="hidden"
+        animate={isInView ? "visible" : "hidden"}
+        style={{ maxWidth: '1200px', margin: '0 auto' }}
+      >
         <SectionHeader number="01" title="About Me" />
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '48px', alignItems: 'center' }}>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+          <motion.div
+            variants={fadeInLeft}
+            initial="hidden"
+            animate={isInView ? "visible" : "hidden"}
+            transition={{ delay: 0.2 }}
+            style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}
+          >
             <p style={{ color: 'var(--text-secondary)', fontSize: '1.125rem', lineHeight: 1.8 }}>
               I'm a passionate <span style={{ color: 'var(--text-primary)', fontWeight: 500 }}>Software Engineering student</span> with a deep love for creating digital experiences. My journey in tech started with curiosity and has evolved into a full-blown obsession with building things.
             </p>
             <p style={{ color: 'var(--text-secondary)', fontSize: '1.125rem', lineHeight: 1.8 }}>
               I specialize in <span style={{ color: 'var(--accent)' }}>full-stack web development</span> and <span style={{ color: 'var(--accent)' }}>Flutter mobile app development</span>. I enjoy the challenge of turning complex problems into simple, beautiful solutions.
             </p>
-          </div>
+          </motion.div>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          <motion.div
+            variants={staggerContainer}
+            initial="hidden"
+            animate={isInView ? "visible" : "hidden"}
+            style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}
+          >
             {[
               { icon: Code2, title: "Full-Stack Development", desc: "Building scalable web applications with modern technologies" },
               { icon: Smartphone, title: "Flutter Development", desc: "Creating beautiful cross-platform mobile experiences" },
               { icon: Rocket, title: "Problem Solving", desc: "Transforming complex challenges into elegant solutions" }
             ].map((item, i) => (
-              <motion.div key={i} initial={{ opacity: 0, x: 20 }} animate={isInView ? { opacity: 1, x: 0 } : {}} transition={{ duration: 0.5, delay: i * 0.1 }} className="glass" style={{ padding: '24px', borderRadius: '12px', display: 'flex', gap: '16px' }}>
-                <div style={{ padding: '12px', borderRadius: '8px', background: 'hsl(187 94% 43% / 0.15)', color: 'var(--accent)' }}>
+              <motion.div
+                key={i}
+                variants={staggerItem}
+                whileHover={{ x: 10, transition: { duration: 0.2 } }}
+                className="glass"
+                style={{ padding: '24px', borderRadius: '12px', display: 'flex', gap: '16px', cursor: 'default' }}
+              >
+                <motion.div
+                  whileHover={{ rotate: 360, transition: { duration: 0.5 } }}
+                  style={{ padding: '12px', borderRadius: '8px', background: 'hsl(187 94% 43% / 0.15)', color: 'var(--accent)' }}
+                >
                   <item.icon size={24} />
-                </div>
+                </motion.div>
                 <div>
                   <h3 style={{ fontWeight: 600, fontSize: '1.125rem', marginBottom: '4px', color: 'var(--text-primary)' }}>{item.title}</h3>
                   <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem' }}>{item.desc}</p>
                 </div>
               </motion.div>
             ))}
-          </div>
+          </motion.div>
         </div>
       </motion.div>
     </section>
@@ -510,42 +592,96 @@ function ProjectsSection() {
 
   return (
     <section id="projects" ref={ref} style={{ padding: '100px 24px' }}>
-      <motion.div initial={{ opacity: 0, y: 40 }} animate={isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6 }} style={{ maxWidth: '1200px', margin: '0 auto' }}>
+      <motion.div
+        variants={fadeInUp}
+        initial="hidden"
+        animate={isInView ? "visible" : "hidden"}
+        style={{ maxWidth: '1200px', margin: '0 auto' }}
+      >
         <SectionHeader number="03" title="Featured Projects" />
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: '80px', marginBottom: '80px' }}>
           {featuredProjects.map((project, i) => (
-            <motion.div key={project.title} initial={{ opacity: 0, y: 30 }} animate={isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6, delay: i * 0.1 }} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '32px', alignItems: 'center' }}>
-              <div className="glass" style={{ aspectRatio: '16/10', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'linear-gradient(135deg, hsl(187 94% 43% / 0.1), hsl(187 94% 43% / 0.02))', order: i % 2 === 1 ? 2 : 1 }}>
-                <span style={{ fontSize: '4rem', color: 'hsl(187 94% 43% / 0.3)' }}>{i + 1}</span>
-              </div>
+            <motion.div
+              key={project.title}
+              variants={i % 2 === 0 ? fadeInLeft : fadeInRight}
+              initial="hidden"
+              animate={isInView ? "visible" : "hidden"}
+              transition={{ delay: i * 0.2 }}
+              style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '32px', alignItems: 'center' }}
+            >
+              <motion.div
+                className="glass"
+                whileHover={{ scale: 1.02, transition: { duration: 0.3 } }}
+                style={{ aspectRatio: '16/10', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'linear-gradient(135deg, hsl(187 94% 43% / 0.1), hsl(187 94% 43% / 0.02))', order: i % 2 === 1 ? 2 : 1 }}
+              >
+                <motion.span
+                  animate={{ scale: [1, 1.1, 1] }}
+                  transition={{ duration: 2, repeat: Infinity, repeatType: "reverse" }}
+                  style={{ fontSize: '4rem', color: 'hsl(187 94% 43% / 0.3)' }}
+                >
+                  {i + 1}
+                </motion.span>
+              </motion.div>
               <div style={{ order: i % 2 === 1 ? 1 : 2, textAlign: i % 2 === 1 ? 'right' : 'left' }}>
-                <span className="font-mono" style={{ color: 'var(--accent)', fontSize: '0.875rem' }}>Featured Project</span>
+                <motion.span
+                  initial={{ opacity: 0 }}
+                  animate={isInView ? { opacity: 1 } : {}}
+                  transition={{ delay: i * 0.2 + 0.3 }}
+                  className="font-mono"
+                  style={{ color: 'var(--accent)', fontSize: '0.875rem' }}
+                >
+                  Featured Project
+                </motion.span>
                 <h3 style={{ fontSize: '1.5rem', fontWeight: 700, marginTop: '8px', marginBottom: '16px' }}>{project.title}</h3>
-                <div className="glass" style={{ padding: '24px', borderRadius: '12px', marginBottom: '16px' }}>
+                <motion.div
+                  whileHover={{ x: i % 2 === 1 ? -5 : 5 }}
+                  className="glass"
+                  style={{ padding: '24px', borderRadius: '12px', marginBottom: '16px' }}
+                >
                   <p style={{ color: 'var(--text-secondary)' }}>{project.description}</p>
-                </div>
+                </motion.div>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px', marginBottom: '24px', justifyContent: i % 2 === 1 ? 'flex-end' : 'flex-start' }}>
                   {project.technologies.map(tech => (
                     <span key={tech} className="font-mono" style={{ color: 'var(--text-secondary)', fontSize: '0.875rem' }}>{tech}</span>
                   ))}
                 </div>
                 <div style={{ display: 'flex', gap: '16px', justifyContent: i % 2 === 1 ? 'flex-end' : 'flex-start' }}>
-                  <a href={project.github} style={{ color: 'var(--text-primary)' }}><Github size={22} /></a>
-                  {project.live && <a href={project.live} style={{ color: 'var(--text-primary)' }}><ExternalLink size={22} /></a>}
+                  <motion.a whileHover={{ scale: 1.2, rotate: 5 }} href={project.github} style={{ color: 'var(--text-primary)' }}><Github size={22} /></motion.a>
+                  {project.live && <motion.a whileHover={{ scale: 1.2, rotate: -5 }} href={project.live} style={{ color: 'var(--text-primary)' }}><ExternalLink size={22} /></motion.a>}
                 </div>
               </div>
             </motion.div>
           ))}
         </div>
 
-        <h3 style={{ fontSize: '1.5rem', fontWeight: 700, textAlign: 'center', marginBottom: '32px' }}>Other Noteworthy Projects</h3>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '16px' }}>
+        <motion.h3
+          variants={fadeInUp}
+          initial="hidden"
+          animate={isInView ? "visible" : "hidden"}
+          style={{ fontSize: '1.5rem', fontWeight: 700, textAlign: 'center', marginBottom: '32px' }}
+        >
+          Other Noteworthy Projects
+        </motion.h3>
+        <motion.div
+          variants={staggerContainer}
+          initial="hidden"
+          animate={isInView ? "visible" : "hidden"}
+          style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '16px' }}
+        >
           {otherProjects.map((project, i) => (
-            <motion.div key={project.title} initial={{ opacity: 0, y: 20 }} animate={isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.5, delay: 0.4 + i * 0.1 }} className="glass" style={{ padding: '24px', borderRadius: '12px' }}>
+            <motion.div
+              key={project.title}
+              variants={staggerItem}
+              whileHover={{ y: -10, transition: { duration: 0.3 } }}
+              className="glass"
+              style={{ padding: '24px', borderRadius: '12px', cursor: 'default' }}
+            >
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-                <Folder size={40} style={{ color: 'var(--accent)' }} />
-                <a href={project.github} style={{ color: 'var(--text-secondary)' }}><Github size={20} /></a>
+                <motion.div whileHover={{ rotate: 15 }}>
+                  <Folder size={40} style={{ color: 'var(--accent)' }} />
+                </motion.div>
+                <motion.a whileHover={{ scale: 1.2 }} href={project.github} style={{ color: 'var(--text-secondary)' }}><Github size={20} /></motion.a>
               </div>
               <h4 style={{ fontSize: '1.125rem', fontWeight: 600, marginBottom: '8px' }}>{project.title}</h4>
               <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', marginBottom: '16px' }}>{project.description}</p>
@@ -556,7 +692,7 @@ function ProjectsSection() {
               </div>
             </motion.div>
           ))}
-        </div>
+        </motion.div>
       </motion.div>
     </section>
   )
