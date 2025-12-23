@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import {
     Plus, Trash2, LogOut, LayoutGrid, Award, MessageSquare,
     X, Github, ExternalLink, Loader2, CheckCircle, AlertCircle,
-    Mail, Clock, User, Folder
+    Mail, Clock, User, Folder, Home, TrendingUp, Eye, Activity
 } from 'lucide-react'
 import API_URL from '../config/api'
 
@@ -91,7 +91,7 @@ function Modal({ isOpen, onClose, title, children }) {
 }
 
 export default function Dashboard() {
-    const [tab, setTab] = useState('projects')
+    const [tab, setTab] = useState('overview')
     const [projects, setProjects] = useState([])
     const [skills, setSkills] = useState([])
     const [messages, setMessages] = useState([])
@@ -185,6 +185,7 @@ export default function Dashboard() {
     }
 
     const tabs = [
+        { id: 'overview', label: 'Overview', icon: Home },
         { id: 'projects', label: 'Projects', icon: LayoutGrid, count: projects.length },
         { id: 'skills', label: 'Skills', icon: Award, count: skills.length },
         { id: 'messages', label: 'Messages', icon: MessageSquare, count: messages.length }
@@ -351,15 +352,17 @@ export default function Dashboard() {
                         >
                             <t.icon size={20} />
                             {t.label}
-                            <span style={{
-                                marginLeft: 'auto',
-                                background: tab === t.id ? 'hsl(222 47% 5% / 0.2)' : 'hsl(222 30% 18%)',
-                                padding: '4px 10px',
-                                borderRadius: '20px',
-                                fontSize: '0.75rem'
-                            }}>
-                                {t.count}
-                            </span>
+                            {t.count !== undefined && (
+                                <span style={{
+                                    marginLeft: 'auto',
+                                    background: tab === t.id ? 'hsl(222 47% 5% / 0.2)' : 'hsl(222 30% 18%)',
+                                    padding: '4px 10px',
+                                    borderRadius: '20px',
+                                    fontSize: '0.75rem'
+                                }}>
+                                    {t.count}
+                                </span>
+                            )}
                         </motion.button>
                     ))}
                 </nav>
@@ -398,12 +401,13 @@ export default function Dashboard() {
                         <div>
                             <h2 style={{ fontSize: '2rem', fontWeight: 700, textTransform: 'capitalize' }}>{tab}</h2>
                             <p style={{ color: 'hsl(215 20% 50%)', marginTop: '4px' }}>
+                                {tab === 'overview' && 'Welcome back! Here\'s your portfolio summary'}
                                 {tab === 'projects' && 'Manage your portfolio projects'}
                                 {tab === 'skills' && 'Manage your skills and technologies'}
                                 {tab === 'messages' && 'View contact form submissions'}
                             </p>
                         </div>
-                        {tab !== 'messages' && (
+                        {(tab === 'projects' || tab === 'skills') && (
                             <motion.button
                                 onClick={() => setShowAddModal(true)}
                                 whileHover={{ scale: 1.02 }}
@@ -434,6 +438,183 @@ export default function Dashboard() {
                         </div>
                     ) : (
                         <>
+                            {/* Overview Tab */}
+                            {tab === 'overview' && (
+                                <div>
+                                    {/* Stats Cards */}
+                                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '20px', marginBottom: '40px' }}>
+                                        {[
+                                            { label: 'Total Projects', value: projects.length, icon: Folder, color: 'hsl(187 94% 43%)', trend: '+2 this month' },
+                                            { label: 'Skills Listed', value: skills.length, icon: Award, color: 'hsl(142 76% 45%)', trend: 'Growing' },
+                                            { label: 'Messages', value: messages.length, icon: MessageSquare, color: 'hsl(262 83% 58%)', trend: 'New inbox' },
+                                            { label: 'Profile Views', value: '1.2K', icon: Eye, color: 'hsl(31 97% 55%)', trend: '+15% this week' }
+                                        ].map((stat, i) => (
+                                            <motion.div
+                                                key={stat.label}
+                                                initial={{ opacity: 0, y: 20 }}
+                                                animate={{ opacity: 1, y: 0 }}
+                                                transition={{ delay: i * 0.1 }}
+                                                whileHover={{ y: -4, transition: { duration: 0.2 } }}
+                                                style={{
+                                                    padding: '24px',
+                                                    borderRadius: '16px',
+                                                    background: 'hsl(222 47% 8%)',
+                                                    border: '1px solid hsl(222 30% 18%)',
+                                                    position: 'relative',
+                                                    overflow: 'hidden'
+                                                }}
+                                            >
+                                                {/* Background glow */}
+                                                <div style={{
+                                                    position: 'absolute',
+                                                    top: '-20px',
+                                                    right: '-20px',
+                                                    width: '80px',
+                                                    height: '80px',
+                                                    borderRadius: '50%',
+                                                    background: stat.color,
+                                                    opacity: 0.1,
+                                                    filter: 'blur(20px)'
+                                                }} />
+                                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px' }}>
+                                                    <div style={{
+                                                        width: '48px',
+                                                        height: '48px',
+                                                        borderRadius: '12px',
+                                                        background: `${stat.color}20`,
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        justifyContent: 'center'
+                                                    }}>
+                                                        <stat.icon size={24} style={{ color: stat.color }} />
+                                                    </div>
+                                                    <span style={{ fontSize: '0.75rem', color: 'hsl(142 76% 45%)', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                                        <TrendingUp size={14} /> {stat.trend}
+                                                    </span>
+                                                </div>
+                                                <motion.h3
+                                                    initial={{ opacity: 0 }}
+                                                    animate={{ opacity: 1 }}
+                                                    style={{ fontSize: '2rem', fontWeight: 700, marginBottom: '4px' }}
+                                                >
+                                                    {stat.value}
+                                                </motion.h3>
+                                                <p style={{ color: 'hsl(215 20% 50%)', fontSize: '0.9rem' }}>{stat.label}</p>
+                                            </motion.div>
+                                        ))}
+                                    </div>
+
+                                    {/* Quick Actions & Recent Activity */}
+                                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '24px' }}>
+                                        {/* Quick Actions */}
+                                        <motion.div
+                                            initial={{ opacity: 0, x: -20 }}
+                                            animate={{ opacity: 1, x: 0 }}
+                                            style={{
+                                                padding: '24px',
+                                                borderRadius: '16px',
+                                                background: 'hsl(222 47% 8%)',
+                                                border: '1px solid hsl(222 30% 18%)'
+                                            }}
+                                        >
+                                            <h3 style={{ fontSize: '1.125rem', fontWeight: 600, marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                                <Activity size={20} style={{ color: 'hsl(187 94% 43%)' }} />
+                                                Quick Actions
+                                            </h3>
+                                            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                                                {[
+                                                    { label: 'Add New Project', action: () => { setTab('projects'); setShowAddModal(true); }, icon: Plus },
+                                                    { label: 'Add New Skill', action: () => { setTab('skills'); setShowAddModal(true); }, icon: Award },
+                                                    { label: 'View Messages', action: () => setTab('messages'), icon: MessageSquare }
+                                                ].map((action, i) => (
+                                                    <motion.button
+                                                        key={action.label}
+                                                        onClick={action.action}
+                                                        whileHover={{ x: 4, background: 'hsl(222 30% 15%)' }}
+                                                        whileTap={{ scale: 0.98 }}
+                                                        style={{
+                                                            display: 'flex',
+                                                            alignItems: 'center',
+                                                            gap: '12px',
+                                                            padding: '14px 16px',
+                                                            background: 'hsl(222 30% 12%)',
+                                                            border: '1px solid hsl(222 30% 18%)',
+                                                            borderRadius: '10px',
+                                                            color: 'white',
+                                                            cursor: 'pointer',
+                                                            fontWeight: 500,
+                                                            textAlign: 'left'
+                                                        }}
+                                                    >
+                                                        <action.icon size={18} style={{ color: 'hsl(187 94% 43%)' }} />
+                                                        {action.label}
+                                                    </motion.button>
+                                                ))}
+                                            </div>
+                                        </motion.div>
+
+                                        {/* Recent Activity */}
+                                        <motion.div
+                                            initial={{ opacity: 0, x: 20 }}
+                                            animate={{ opacity: 1, x: 0 }}
+                                            style={{
+                                                padding: '24px',
+                                                borderRadius: '16px',
+                                                background: 'hsl(222 47% 8%)',
+                                                border: '1px solid hsl(222 30% 18%)'
+                                            }}
+                                        >
+                                            <h3 style={{ fontSize: '1.125rem', fontWeight: 600, marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                                <Clock size={20} style={{ color: 'hsl(187 94% 43%)' }} />
+                                                Recent Activity
+                                            </h3>
+                                            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                                                {messages.length > 0 ? messages.slice(0, 3).map((msg, i) => (
+                                                    <motion.div
+                                                        key={msg._id}
+                                                        initial={{ opacity: 0, x: 10 }}
+                                                        animate={{ opacity: 1, x: 0 }}
+                                                        transition={{ delay: i * 0.1 }}
+                                                        style={{
+                                                            display: 'flex',
+                                                            alignItems: 'center',
+                                                            gap: '12px',
+                                                            padding: '12px',
+                                                            background: 'hsl(222 30% 12%)',
+                                                            borderRadius: '10px'
+                                                        }}
+                                                    >
+                                                        <div style={{
+                                                            width: '36px',
+                                                            height: '36px',
+                                                            borderRadius: '50%',
+                                                            background: 'hsl(187 94% 43% / 0.1)',
+                                                            display: 'flex',
+                                                            alignItems: 'center',
+                                                            justifyContent: 'center'
+                                                        }}>
+                                                            <Mail size={16} style={{ color: 'hsl(187 94% 43%)' }} />
+                                                        </div>
+                                                        <div style={{ flex: 1 }}>
+                                                            <p style={{ fontSize: '0.875rem', fontWeight: 500, marginBottom: '2px' }}>
+                                                                New message from {msg.senderName}
+                                                            </p>
+                                                            <p style={{ fontSize: '0.75rem', color: 'hsl(215 20% 50%)' }}>
+                                                                {msg.email}
+                                                            </p>
+                                                        </div>
+                                                    </motion.div>
+                                                )) : (
+                                                    <p style={{ color: 'hsl(215 20% 50%)', fontSize: '0.9rem', textAlign: 'center', padding: '20px' }}>
+                                                        No recent activity
+                                                    </p>
+                                                )}
+                                            </div>
+                                        </motion.div>
+                                    </div>
+                                </div>
+                            )}
+
                             {/* Projects Tab */}
                             {tab === 'projects' && (
                                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '20px' }}>
