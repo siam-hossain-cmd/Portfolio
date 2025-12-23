@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import { motion } from 'framer-motion'
 import { Lock, User } from 'lucide-react'
+import API_URL from '../config/api'
 
 export default function AdminLogin() {
     const [username, setUsername] = useState('')
@@ -13,7 +14,7 @@ export default function AdminLogin() {
     const handleLogin = async (e) => {
         e.preventDefault()
         try {
-            const res = await axios.post('http://localhost:5001/api/auth/login', { username, password })
+            const res = await axios.post(`${API_URL}/auth/login`, { username, password })
             localStorage.setItem('adminToken', res.data.token)
             navigate('/admin/dashboard')
         } catch (err) {

@@ -2,8 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { motion, useInView } from 'framer-motion'
 import { Github, Linkedin, Mail, Download, ArrowDown, ExternalLink, Code2, Smartphone, Rocket, Search, PenTool, Code, TestTube, Send, MapPin, Menu, X, Folder, User, Sun, Moon, Phone } from 'lucide-react'
 import axios from 'axios'
-
-const API_URL = 'http://localhost:5001/api'
+import API_URL from './config/api'
 
 // Roles for typewriter effect
 const roles = [

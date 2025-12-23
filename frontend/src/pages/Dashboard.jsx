@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import { Plus, Trash, LogOut, LayoutGrid, Award, MessageSquare } from 'lucide-react'
+import API_URL from '../config/api'
 
 export default function Dashboard() {
     const [projects, setProjects] = useState([])
@@ -19,7 +20,7 @@ export default function Dashboard() {
 
     const fetchProjects = async () => {
         try {
-            const res = await axios.get('http://localhost:5001/api/projects')
+            const res = await axios.get(`${API_URL}/projects`)
             setProjects(res.data)
         } catch (err) {
             console.error(err)
