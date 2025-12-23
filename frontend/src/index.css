@@ -1,0 +1,114 @@
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+
+@import "tailwindcss";
+
+/* Dark Mode (default) */
+:root {
+  --bg-primary: hsl(222 47% 5%);
+  --bg-secondary: hsl(222 47% 8%);
+  --bg-card: hsl(222 47% 8% / 0.5);
+  --text-primary: hsl(210 40% 98%);
+  --text-secondary: hsl(215 20% 55%);
+  --accent: hsl(187 94% 43%);
+  --border: hsl(222 30% 18%);
+}
+
+/* Light Mode */
+.light-mode {
+  --bg-primary: hsl(210 40% 98%);
+  --bg-secondary: hsl(210 30% 95%);
+  --bg-card: hsl(210 30% 96% / 0.8);
+  --text-primary: hsl(222 47% 11%);
+  --text-secondary: hsl(215 20% 40%);
+  --accent: hsl(187 94% 35%);
+  --border: hsl(215 20% 85%);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+/* Utility classes */
+.text-gradient {
+  background: linear-gradient(135deg, hsl(187 94% 43%), hsl(199 89% 48%));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.glass {
+  background: var(--bg-card);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border);
+  transition: background 0.3s ease, border-color 0.3s ease;
+}
+
+.glow {
+  box-shadow: 0 0 40px hsl(187 94% 43% / 0.3);
+}
+
+.font-mono {
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-primary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(187 94% 43% / 0.5);
+}
+
+::selection {
+  background-color: hsl(187 94% 43% / 0.3);
+}
+
+/* Theme toggle button */
+.theme-toggle {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.theme-toggle:hover {
+  border-color: var(--accent);
+  transform: rotate(15deg);
+}
