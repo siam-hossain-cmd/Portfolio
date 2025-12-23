@@ -1,11 +1,17 @@
 const express = require('express');
 const router = express.Router();
-const Skill = require('../models/Skill');
+const { db } = require('../config/firebase');
+
+const skillsCollection = db.collection('skills');
 
 // GET all skills
 router.get('/', async (req, res) => {
     try {
-        const skills = await Skill.find();
+        const snapshot = await skillsCollection.get();
+        const skills = snapshot.docs.map(doc => ({
+            _id: doc.id,
+            ...doc.data()
+        }));
         res.json(skills);
     } catch (err) {
         res.status(500).json({ message: err.message });
@@ -14,10 +20,10 @@ router.get('/', async (req, res) => {
 
 // POST a new skill
 router.post('/', async (req, res) => {
-    const skill = new Skill(req.body);
     try {
-        const newSkill = await skill.save();
-        res.status(201).json(newSkill);
+        const skillData = { ...req.body };
+        const docRef = await skillsCollection.add(skillData);
+        res.status(201).json({ _id: docRef.id, ...skillData });
     } catch (err) {
         res.status(400).json({ message: err.message });
     }

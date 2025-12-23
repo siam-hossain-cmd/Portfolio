@@ -1,13 +1,18 @@
 const express = require('express');
 const router = express.Router();
-const Message = require('../models/Message');
+const { db } = require('../config/firebase');
+
+const messagesCollection = db.collection('messages');
 
 // POST a new message
 router.post('/', async (req, res) => {
-    const message = new Message(req.body);
     try {
-        const newMessage = await message.save();
-        res.status(201).json(newMessage);
+        const messageData = {
+            ...req.body,
+            createdAt: new Date()
+        };
+        const docRef = await messagesCollection.add(messageData);
+        res.status(201).json({ _id: docRef.id, ...messageData });
     } catch (err) {
         res.status(400).json({ message: err.message });
     }
@@ -16,7 +21,11 @@ router.post('/', async (req, res) => {
 // GET all messages (Admin only)
 router.get('/', async (req, res) => {
     try {
-        const messages = await Message.find().sort({ createdAt: -1 });
+        const snapshot = await messagesCollection.orderBy('createdAt', 'desc').get();
+        const messages = snapshot.docs.map(doc => ({
+            _id: doc.id,
+            ...doc.data()
+        }));
         res.json(messages);
     } catch (err) {
         res.status(500).json({ message: err.message });
