@@ -1,13 +1,113 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
-import { Plus, Trash, LogOut, LayoutGrid, Award, MessageSquare } from 'lucide-react'
+import { motion, AnimatePresence } from 'framer-motion'
+import {
+    Plus, Trash2, LogOut, LayoutGrid, Award, MessageSquare,
+    X, Github, ExternalLink, Loader2, CheckCircle, AlertCircle,
+    Mail, Clock, User, Folder
+} from 'lucide-react'
 import API_URL from '../config/api'
 
+// Toast notification component
+function Toast({ message, type, onClose }) {
+    useEffect(() => {
+        const timer = setTimeout(onClose, 3000)
+        return () => clearTimeout(timer)
+    }, [onClose])
+
+    return (
+        <motion.div
+            initial={{ opacity: 0, y: -50, x: '-50%' }}
+            animate={{ opacity: 1, y: 0, x: '-50%' }}
+            exit={{ opacity: 0, y: -50, x: '-50%' }}
+            style={{
+                position: 'fixed',
+                top: '24px',
+                left: '50%',
+                padding: '16px 24px',
+                borderRadius: '12px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px',
+                zIndex: 100,
+                background: type === 'success' ? 'hsl(142 76% 36%)' : 'hsl(0 84% 60%)',
+                color: 'white',
+                fontWeight: 500,
+                boxShadow: '0 10px 40px rgba(0,0,0,0.3)'
+            }}
+        >
+            {type === 'success' ? <CheckCircle size={20} /> : <AlertCircle size={20} />}
+            {message}
+        </motion.div>
+    )
+}
+
+// Modal component
+function Modal({ isOpen, onClose, title, children }) {
+    if (!isOpen) return null
+
+    return (
+        <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={onClose}
+            style={{
+                position: 'fixed',
+                inset: 0,
+                background: 'rgba(0,0,0,0.8)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                zIndex: 50,
+                padding: '24px'
+            }}
+        >
+            <motion.div
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.9, opacity: 0 }}
+                onClick={e => e.stopPropagation()}
+                style={{
+                    background: 'hsl(222 47% 8%)',
+                    borderRadius: '20px',
+                    padding: '32px',
+                    width: '100%',
+                    maxWidth: '500px',
+                    border: '1px solid hsl(222 30% 18%)'
+                }}
+            >
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+                    <h3 style={{ fontSize: '1.5rem', fontWeight: 700, color: 'white' }}>{title}</h3>
+                    <button onClick={onClose} style={{ color: 'hsl(215 20% 65%)', background: 'none', border: 'none', cursor: 'pointer' }}>
+                        <X size={24} />
+                    </button>
+                </div>
+                {children}
+            </motion.div>
+        </motion.div>
+    )
+}
+
 export default function Dashboard() {
-    const [projects, setProjects] = useState([])
     const [tab, setTab] = useState('projects')
+    const [projects, setProjects] = useState([])
+    const [skills, setSkills] = useState([])
+    const [messages, setMessages] = useState([])
+    const [loading, setLoading] = useState(true)
+    const [toast, setToast] = useState(null)
+    const [showAddModal, setShowAddModal] = useState(false)
+    const [showDeleteModal, setShowDeleteModal] = useState(null)
     const navigate = useNavigate()
+
+    // Form states
+    const [projectForm, setProjectForm] = useState({
+        title: '', description: '', image: '', githubLink: '', liveLink: '', tags: ''
+    })
+    const [skillForm, setSkillForm] = useState({
+        name: '', category: 'Frontend', icon: ''
+    })
 
     useEffect(() => {
         const token = localStorage.getItem('adminToken')
@@ -15,16 +115,24 @@ export default function Dashboard() {
             navigate('/admin/login')
             return
         }
-        fetchProjects()
-    }, [])
+        fetchData()
+    }, [navigate])
 
-    const fetchProjects = async () => {
+    const fetchData = async () => {
+        setLoading(true)
         try {
-            const res = await axios.get(`${API_URL}/projects`)
-            setProjects(res.data)
+            const [projectsRes, skillsRes, messagesRes] = await Promise.all([
+                axios.get(`${API_URL}/projects`),
+                axios.get(`${API_URL}/skills`),
+                axios.get(`${API_URL}/messages`)
+            ])
+            setProjects(projectsRes.data)
+            setSkills(skillsRes.data)
+            setMessages(messagesRes.data)
         } catch (err) {
             console.error(err)
         }
+        setLoading(false)
     }
 
     const handleLogout = () => {
@@ -32,81 +140,482 @@ export default function Dashboard() {
         navigate('/admin/login')
     }
 
+    const showToast = (message, type = 'success') => {
+        setToast({ message, type })
+    }
+
+    // Project CRUD
+    const handleAddProject = async (e) => {
+        e.preventDefault()
+        try {
+            const tags = projectForm.tags.split(',').map(t => t.trim()).filter(t => t)
+            await axios.post(`${API_URL}/projects`, { ...projectForm, tags })
+            showToast('Project added successfully!')
+            setShowAddModal(false)
+            setProjectForm({ title: '', description: '', image: '', githubLink: '', liveLink: '', tags: '' })
+            fetchData()
+        } catch (err) {
+            showToast('Failed to add project', 'error')
+        }
+    }
+
+    const handleDeleteProject = async (id) => {
+        try {
+            await axios.delete(`${API_URL}/projects/${id}`)
+            showToast('Project deleted!')
+            setShowDeleteModal(null)
+            fetchData()
+        } catch (err) {
+            showToast('Failed to delete project', 'error')
+        }
+    }
+
+    // Skill CRUD
+    const handleAddSkill = async (e) => {
+        e.preventDefault()
+        try {
+            await axios.post(`${API_URL}/skills`, skillForm)
+            showToast('Skill added successfully!')
+            setShowAddModal(false)
+            setSkillForm({ name: '', category: 'Frontend', icon: '' })
+            fetchData()
+        } catch (err) {
+            showToast('Failed to add skill', 'error')
+        }
+    }
+
+    const tabs = [
+        { id: 'projects', label: 'Projects', icon: LayoutGrid, count: projects.length },
+        { id: 'skills', label: 'Skills', icon: Award, count: skills.length },
+        { id: 'messages', label: 'Messages', icon: MessageSquare, count: messages.length }
+    ]
+
     return (
-        <div className="min-h-screen bg-black text-white flex">
+        <div style={{ minHeight: '100vh', background: 'hsl(222 47% 5%)', color: 'white', display: 'flex' }}>
+            {/* Toast */}
+            <AnimatePresence>
+                {toast && <Toast {...toast} onClose={() => setToast(null)} />}
+            </AnimatePresence>
+
+            {/* Delete Confirmation Modal */}
+            <AnimatePresence>
+                {showDeleteModal && (
+                    <Modal isOpen={true} onClose={() => setShowDeleteModal(null)} title="Confirm Delete">
+                        <p style={{ color: 'hsl(215 20% 65%)', marginBottom: '24px' }}>
+                            Are you sure you want to delete this item? This action cannot be undone.
+                        </p>
+                        <div style={{ display: 'flex', gap: '12px' }}>
+                            <button
+                                onClick={() => setShowDeleteModal(null)}
+                                style={{ flex: 1, padding: '12px', background: 'hsl(222 30% 18%)', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 600 }}
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={() => handleDeleteProject(showDeleteModal)}
+                                style={{ flex: 1, padding: '12px', background: 'hsl(0 84% 60%)', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 600 }}
+                            >
+                                Delete
+                            </button>
+                        </div>
+                    </Modal>
+                )}
+            </AnimatePresence>
+
+            {/* Add Modal */}
+            <AnimatePresence>
+                {showAddModal && (
+                    <Modal isOpen={true} onClose={() => setShowAddModal(false)} title={tab === 'projects' ? 'Add Project' : 'Add Skill'}>
+                        {tab === 'projects' ? (
+                            <form onSubmit={handleAddProject} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                                <input
+                                    placeholder="Project Title"
+                                    value={projectForm.title}
+                                    onChange={e => setProjectForm({ ...projectForm, title: e.target.value })}
+                                    required
+                                    style={inputStyle}
+                                />
+                                <textarea
+                                    placeholder="Description"
+                                    value={projectForm.description}
+                                    onChange={e => setProjectForm({ ...projectForm, description: e.target.value })}
+                                    required
+                                    rows={3}
+                                    style={{ ...inputStyle, resize: 'none' }}
+                                />
+                                <input
+                                    placeholder="Image URL"
+                                    value={projectForm.image}
+                                    onChange={e => setProjectForm({ ...projectForm, image: e.target.value })}
+                                    required
+                                    style={inputStyle}
+                                />
+                                <input
+                                    placeholder="GitHub Link"
+                                    value={projectForm.githubLink}
+                                    onChange={e => setProjectForm({ ...projectForm, githubLink: e.target.value })}
+                                    style={inputStyle}
+                                />
+                                <input
+                                    placeholder="Live Demo Link"
+                                    value={projectForm.liveLink}
+                                    onChange={e => setProjectForm({ ...projectForm, liveLink: e.target.value })}
+                                    style={inputStyle}
+                                />
+                                <input
+                                    placeholder="Tags (comma separated)"
+                                    value={projectForm.tags}
+                                    onChange={e => setProjectForm({ ...projectForm, tags: e.target.value })}
+                                    style={inputStyle}
+                                />
+                                <button type="submit" style={buttonStyle}>
+                                    Add Project
+                                </button>
+                            </form>
+                        ) : (
+                            <form onSubmit={handleAddSkill} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                                <input
+                                    placeholder="Skill Name"
+                                    value={skillForm.name}
+                                    onChange={e => setSkillForm({ ...skillForm, name: e.target.value })}
+                                    required
+                                    style={inputStyle}
+                                />
+                                <select
+                                    value={skillForm.category}
+                                    onChange={e => setSkillForm({ ...skillForm, category: e.target.value })}
+                                    style={inputStyle}
+                                >
+                                    <option value="Frontend">Frontend</option>
+                                    <option value="Backend">Backend</option>
+                                    <option value="Mobile">Mobile</option>
+                                    <option value="Database">Database</option>
+                                    <option value="Tools">DevOps & Tools</option>
+                                </select>
+                                <input
+                                    placeholder="Icon URL (optional)"
+                                    value={skillForm.icon}
+                                    onChange={e => setSkillForm({ ...skillForm, icon: e.target.value })}
+                                    style={inputStyle}
+                                />
+                                <button type="submit" style={buttonStyle}>
+                                    Add Skill
+                                </button>
+                            </form>
+                        )}
+                    </Modal>
+                )}
+            </AnimatePresence>
+
             {/* Sidebar */}
-            <div className="w-64 border-r border-white/10 p-6 flex flex-col">
-                <h1 className="text-xl font-bold mb-12">Dashboard</h1>
-
-                <nav className="space-y-2 flex-grow">
-                    <button
-                        onClick={() => setTab('projects')}
-                        className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${tab === 'projects' ? 'bg-accent-blue' : 'hover:bg-white/5'}`}
-                    >
-                        <LayoutGrid size={18} /> Projects
-                    </button>
-                    <button
-                        onClick={() => setTab('skills')}
-                        className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${tab === 'skills' ? 'bg-accent-blue' : 'hover:bg-white/5'}`}
-                    >
-                        <Award size={18} /> Skills
-                    </button>
-                    <button
-                        onClick={() => setTab('messages')}
-                        className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${tab === 'messages' ? 'bg-accent-blue' : 'hover:bg-white/5'}`}
-                    >
-                        <MessageSquare size={18} /> Messages
-                    </button>
-                </nav>
-
-                <button
-                    onClick={handleLogout}
-                    className="flex items-center gap-3 px-4 py-3 text-red-500 hover:bg-red-500/10 rounded-xl transition-colors"
-                >
-                    <LogOut size={18} /> Logout
-                </button>
-            </div>
-
-            {/* Main Content */}
-            <div className="flex-grow p-10">
-                <div className="flex justify-between items-center mb-10">
-                    <h2 className="text-3xl font-bold capitalize">{tab}</h2>
-                    {tab === 'projects' && (
-                        <button className="flex items-center gap-2 px-6 py-2 bg-white text-black rounded-lg font-bold hover:bg-white/90 transition-colors">
-                            <Plus size={18} /> Add Project
-                        </button>
-                    )}
+            <motion.div
+                initial={{ x: -100, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                style={{
+                    width: '280px',
+                    borderRight: '1px solid hsl(222 30% 18%)',
+                    padding: '32px 24px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    background: 'hsl(222 47% 6%)'
+                }}
+            >
+                <div style={{ marginBottom: '48px' }}>
+                    <h1 style={{ fontSize: '1.5rem', fontWeight: 700, background: 'linear-gradient(135deg, hsl(187 94% 43%), hsl(187 80% 60%))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+                        Admin Panel
+                    </h1>
+                    <p style={{ color: 'hsl(215 20% 50%)', fontSize: '0.875rem', marginTop: '4px' }}>Manage your portfolio</p>
                 </div>
 
-                {tab === 'projects' && (
-                    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                        {projects.map((project) => (
-                            <div key={project._id} className="p-6 rounded-2xl bg-white/5 border border-white/10 group">
-                                <div className="flex justify-between items-start mb-4">
-                                    <h3 className="font-bold">{project.title}</h3>
-                                    <button className="text-white/20 hover:text-red-500 transition-colors">
-                                        <Trash size={18} />
-                                    </button>
-                                </div>
-                                <p className="text-sm text-white/40 mb-4">{project.description}</p>
-                                <div className="flex gap-2">
-                                    {project.tags?.map(t => (
-                                        <span key={t} className="px-2 py-1 bg-white/5 rounded text-[10px] uppercase font-bold text-white/30">{t}</span>
-                                    ))}
-                                </div>
-                            </div>
-                        ))}
-                        {projects.length === 0 && (
-                            <div className="col-span-full py-20 text-center text-white/20">
-                                No projects found. Add your first project!
-                            </div>
+                <nav style={{ display: 'flex', flexDirection: 'column', gap: '8px', flex: 1 }}>
+                    {tabs.map(t => (
+                        <motion.button
+                            key={t.id}
+                            onClick={() => setTab(t.id)}
+                            whileHover={{ x: 4 }}
+                            whileTap={{ scale: 0.98 }}
+                            style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '12px',
+                                padding: '14px 16px',
+                                borderRadius: '12px',
+                                border: 'none',
+                                cursor: 'pointer',
+                                background: tab === t.id ? 'hsl(187 94% 43%)' : 'transparent',
+                                color: tab === t.id ? 'hsl(222 47% 5%)' : 'hsl(215 20% 65%)',
+                                fontWeight: 600,
+                                fontSize: '0.95rem',
+                                transition: 'all 0.2s'
+                            }}
+                        >
+                            <t.icon size={20} />
+                            {t.label}
+                            <span style={{
+                                marginLeft: 'auto',
+                                background: tab === t.id ? 'hsl(222 47% 5% / 0.2)' : 'hsl(222 30% 18%)',
+                                padding: '4px 10px',
+                                borderRadius: '20px',
+                                fontSize: '0.75rem'
+                            }}>
+                                {t.count}
+                            </span>
+                        </motion.button>
+                    ))}
+                </nav>
+
+                <motion.button
+                    onClick={handleLogout}
+                    whileHover={{ x: 4 }}
+                    style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '12px',
+                        padding: '14px 16px',
+                        borderRadius: '12px',
+                        border: 'none',
+                        cursor: 'pointer',
+                        background: 'transparent',
+                        color: 'hsl(0 84% 60%)',
+                        fontWeight: 600,
+                        fontSize: '0.95rem'
+                    }}
+                >
+                    <LogOut size={20} />
+                    Logout
+                </motion.button>
+            </motion.div>
+
+            {/* Main Content */}
+            <div style={{ flex: 1, padding: '32px 48px', overflowY: 'auto' }}>
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    key={tab}
+                >
+                    {/* Header */}
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
+                        <div>
+                            <h2 style={{ fontSize: '2rem', fontWeight: 700, textTransform: 'capitalize' }}>{tab}</h2>
+                            <p style={{ color: 'hsl(215 20% 50%)', marginTop: '4px' }}>
+                                {tab === 'projects' && 'Manage your portfolio projects'}
+                                {tab === 'skills' && 'Manage your skills and technologies'}
+                                {tab === 'messages' && 'View contact form submissions'}
+                            </p>
+                        </div>
+                        {tab !== 'messages' && (
+                            <motion.button
+                                onClick={() => setShowAddModal(true)}
+                                whileHover={{ scale: 1.02 }}
+                                whileTap={{ scale: 0.98 }}
+                                style={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '8px',
+                                    padding: '12px 24px',
+                                    background: 'hsl(187 94% 43%)',
+                                    color: 'hsl(222 47% 5%)',
+                                    border: 'none',
+                                    borderRadius: '12px',
+                                    fontWeight: 700,
+                                    cursor: 'pointer'
+                                }}
+                            >
+                                <Plus size={20} />
+                                Add {tab === 'projects' ? 'Project' : 'Skill'}
+                            </motion.button>
                         )}
                     </div>
-                )}
 
-                {tab === 'skills' && <div className="text-white/40">Skills management coming soon...</div>}
-                {tab === 'messages' && <div className="text-white/40">Messages inbox coming soon...</div>}
+                    {/* Loading State */}
+                    {loading ? (
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '300px' }}>
+                            <Loader2 size={40} style={{ animation: 'spin 1s linear infinite', color: 'hsl(187 94% 43%)' }} />
+                        </div>
+                    ) : (
+                        <>
+                            {/* Projects Tab */}
+                            {tab === 'projects' && (
+                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '20px' }}>
+                                    {projects.map((project, i) => (
+                                        <motion.div
+                                            key={project._id}
+                                            initial={{ opacity: 0, y: 20 }}
+                                            animate={{ opacity: 1, y: 0 }}
+                                            transition={{ delay: i * 0.05 }}
+                                            whileHover={{ y: -4 }}
+                                            style={{
+                                                padding: '24px',
+                                                borderRadius: '16px',
+                                                background: 'hsl(222 47% 8%)',
+                                                border: '1px solid hsl(222 30% 18%)'
+                                            }}
+                                        >
+                                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px' }}>
+                                                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                                    <Folder size={24} style={{ color: 'hsl(187 94% 43%)' }} />
+                                                    <h3 style={{ fontSize: '1.125rem', fontWeight: 600 }}>{project.title}</h3>
+                                                </div>
+                                                <motion.button
+                                                    onClick={() => setShowDeleteModal(project._id)}
+                                                    whileHover={{ scale: 1.1 }}
+                                                    style={{ background: 'none', border: 'none', color: 'hsl(215 20% 50%)', cursor: 'pointer' }}
+                                                >
+                                                    <Trash2 size={18} />
+                                                </motion.button>
+                                            </div>
+                                            <p style={{ color: 'hsl(215 20% 50%)', fontSize: '0.875rem', marginBottom: '16px', lineHeight: 1.6 }}>
+                                                {project.description?.slice(0, 100)}...
+                                            </p>
+                                            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '16px' }}>
+                                                {project.tags?.map(tag => (
+                                                    <span key={tag} style={{
+                                                        padding: '4px 10px',
+                                                        background: 'hsl(187 94% 43% / 0.1)',
+                                                        color: 'hsl(187 94% 43%)',
+                                                        borderRadius: '20px',
+                                                        fontSize: '0.75rem',
+                                                        fontWeight: 500
+                                                    }}>
+                                                        {tag}
+                                                    </span>
+                                                ))}
+                                            </div>
+                                            <div style={{ display: 'flex', gap: '12px' }}>
+                                                {project.githubLink && (
+                                                    <a href={project.githubLink} target="_blank" rel="noopener noreferrer" style={{ color: 'hsl(215 20% 65%)' }}>
+                                                        <Github size={18} />
+                                                    </a>
+                                                )}
+                                                {project.liveLink && (
+                                                    <a href={project.liveLink} target="_blank" rel="noopener noreferrer" style={{ color: 'hsl(215 20% 65%)' }}>
+                                                        <ExternalLink size={18} />
+                                                    </a>
+                                                )}
+                                            </div>
+                                        </motion.div>
+                                    ))}
+                                    {projects.length === 0 && (
+                                        <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '60px', color: 'hsl(215 20% 50%)' }}>
+                                            <Folder size={48} style={{ margin: '0 auto 16px', opacity: 0.5 }} />
+                                            <p>No projects yet. Add your first project!</p>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+
+                            {/* Skills Tab */}
+                            {tab === 'skills' && (
+                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '16px' }}>
+                                    {skills.map((skill, i) => (
+                                        <motion.div
+                                            key={skill._id}
+                                            initial={{ opacity: 0, scale: 0.9 }}
+                                            animate={{ opacity: 1, scale: 1 }}
+                                            transition={{ delay: i * 0.03 }}
+                                            whileHover={{ scale: 1.02 }}
+                                            style={{
+                                                padding: '20px',
+                                                borderRadius: '12px',
+                                                background: 'hsl(222 47% 8%)',
+                                                border: '1px solid hsl(222 30% 18%)',
+                                                textAlign: 'center'
+                                            }}
+                                        >
+                                            {skill.icon && (
+                                                <img src={skill.icon} alt={skill.name} style={{ width: '40px', height: '40px', margin: '0 auto 12px' }} />
+                                            )}
+                                            <h4 style={{ fontWeight: 600, marginBottom: '4px' }}>{skill.name}</h4>
+                                            <p style={{ fontSize: '0.75rem', color: 'hsl(187 94% 43%)' }}>{skill.category}</p>
+                                        </motion.div>
+                                    ))}
+                                    {skills.length === 0 && (
+                                        <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '60px', color: 'hsl(215 20% 50%)' }}>
+                                            <Award size={48} style={{ margin: '0 auto 16px', opacity: 0.5 }} />
+                                            <p>No skills yet. Add your first skill!</p>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+
+                            {/* Messages Tab */}
+                            {tab === 'messages' && (
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                                    {messages.map((msg, i) => (
+                                        <motion.div
+                                            key={msg._id}
+                                            initial={{ opacity: 0, x: -20 }}
+                                            animate={{ opacity: 1, x: 0 }}
+                                            transition={{ delay: i * 0.05 }}
+                                            style={{
+                                                padding: '24px',
+                                                borderRadius: '16px',
+                                                background: 'hsl(222 47% 8%)',
+                                                border: '1px solid hsl(222 30% 18%)'
+                                            }}
+                                        >
+                                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
+                                                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                                    <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'hsl(187 94% 43% / 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                                        <User size={20} style={{ color: 'hsl(187 94% 43%)' }} />
+                                                    </div>
+                                                    <div>
+                                                        <h4 style={{ fontWeight: 600 }}>{msg.senderName}</h4>
+                                                        <p style={{ fontSize: '0.875rem', color: 'hsl(215 20% 50%)', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                                            <Mail size={14} /> {msg.email}
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                                <span style={{ fontSize: '0.75rem', color: 'hsl(215 20% 50%)', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                                    <Clock size={14} />
+                                                    {new Date(msg.createdAt).toLocaleDateString()}
+                                                </span>
+                                            </div>
+                                            <p style={{ color: 'hsl(215 20% 65%)', lineHeight: 1.7 }}>{msg.message}</p>
+                                        </motion.div>
+                                    ))}
+                                    {messages.length === 0 && (
+                                        <div style={{ textAlign: 'center', padding: '60px', color: 'hsl(215 20% 50%)' }}>
+                                            <MessageSquare size={48} style={{ margin: '0 auto 16px', opacity: 0.5 }} />
+                                            <p>No messages yet.</p>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+                        </>
+                    )}
+                </motion.div>
             </div>
+
+            <style>{`
+                @keyframes spin {
+                    from { transform: rotate(0deg); }
+                    to { transform: rotate(360deg); }
+                }
+            `}</style>
         </div>
     )
+}
+
+const inputStyle = {
+    width: '100%',
+    padding: '14px 16px',
+    background: 'hsl(222 47% 12%)',
+    border: '1px solid hsl(222 30% 18%)',
+    borderRadius: '10px',
+    color: 'white',
+    fontSize: '0.95rem',
+    outline: 'none'
+}
+
+const buttonStyle = {
+    width: '100%',
+    padding: '14px',
+    background: 'hsl(187 94% 43%)',
+    color: 'hsl(222 47% 5%)',
+    border: 'none',
+    borderRadius: '10px',
+    fontWeight: 700,
+    cursor: 'pointer',
+    fontSize: '1rem'
 }
