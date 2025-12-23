@@ -252,6 +252,31 @@ export default function AdminLogin() {
                             'Sign In'
                         )}
                     </motion.button>
+
+                    {/* Demo Button */}
+                    <motion.button
+                        type="button"
+                        onClick={() => {
+                            setUsername('admin@gmail.com')
+                            setPassword('admin123')
+                        }}
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        style={{
+                            width: '100%',
+                            padding: '14px',
+                            background: 'transparent',
+                            color: 'hsl(187 94% 43%)',
+                            border: '1px solid hsl(187 94% 43% / 0.3)',
+                            borderRadius: '12px',
+                            fontWeight: 600,
+                            fontSize: '0.9rem',
+                            cursor: 'pointer',
+                            marginTop: '4px'
+                        }}
+                    >
+                        🎯 Fill Demo Credentials
+                    </motion.button>
                 </form>
 
                 <p style={{
