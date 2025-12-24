@@ -140,7 +140,7 @@ export default function AdminLogin() {
                             color: 'hsl(215 20% 65%)',
                             marginBottom: '8px'
                         }}>
-                            Username
+                            Email
                         </label>
                         <div style={{ position: 'relative' }}>
                             <User
@@ -157,7 +157,7 @@ export default function AdminLogin() {
                                 type="text"
                                 value={username}
                                 onChange={(e) => setUsername(e.target.value)}
-                                placeholder="Enter username"
+                                placeholder="Enter email"
                                 required
                                 style={{
                                     width: '100%',
@@ -251,31 +251,6 @@ export default function AdminLogin() {
                         ) : (
                             'Sign In'
                         )}
-                    </motion.button>
-
-                    {/* Demo Button */}
-                    <motion.button
-                        type="button"
-                        onClick={() => {
-                            setUsername('admin@gmail.com')
-                            setPassword('admin123')
-                        }}
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
-                        style={{
-                            width: '100%',
-                            padding: '14px',
-                            background: 'transparent',
-                            color: 'hsl(187 94% 43%)',
-                            border: '1px solid hsl(187 94% 43% / 0.3)',
-                            borderRadius: '12px',
-                            fontWeight: 600,
-                            fontSize: '0.9rem',
-                            cursor: 'pointer',
-                            marginTop: '4px'
-                        }}
-                    >
-                        🎯 Fill Demo Credentials
                     </motion.button>
                 </form>
 

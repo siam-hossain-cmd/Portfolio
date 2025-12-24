@@ -355,9 +355,16 @@ function HeroSection() {
             </motion.div>
 
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.5 }} style={{ display: 'flex', gap: '16px' }}>
-              {[Github, Linkedin, Mail].map((Icon, i) => (
-                <a key={i} href="#" style={{ padding: '12px', borderRadius: '50%', border: '1px solid var(--border)', color: 'var(--text-primary)', background: 'var(--bg-secondary)' }}>
-                  <Icon size={22} />
+              {[
+                { Icon: Github, href: 'https://github.com/siam-hossain-cmd' },
+                { Icon: Linkedin, href: 'https://linkedin.com/in/hossainsiam' },
+                { Icon: Mail, href: 'mailto:s.siamhossain.h@gmail.com' }
+              ].map((item, i) => (
+                <a key={i} href={item.href} target={item.href.startsWith('mailto') ? undefined : '_blank'} rel="noopener noreferrer" style={{ padding: '12px', borderRadius: '50%', border: '1px solid var(--border)', color: 'var(--text-primary)', background: 'var(--bg-secondary)', transition: 'all 0.3s' }}
+                  onMouseOver={e => { e.currentTarget.style.borderColor = 'var(--accent)'; e.currentTarget.style.color = 'var(--accent)' }}
+                  onMouseOut={e => { e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.color = 'var(--text-primary)' }}
+                >
+                  <item.Icon size={22} />
                 </a>
               ))}
             </motion.div>
@@ -601,7 +608,7 @@ function SkillsSection({ isDarkMode }) {
 }
 
 // Projects Section
-function ProjectsSection() {
+function ProjectsSection({ isDarkMode }) {
   const ref = useRef(null)
   const isInView = useInView(ref, { once: true, margin: "-100px" })
 
@@ -613,21 +620,7 @@ function ProjectsSection() {
         animate={isInView ? "visible" : "hidden"}
         style={{ maxWidth: '1200px', margin: '0 auto' }}
       >
-        {/* Section Header */}
-        <div style={{ textAlign: 'center', marginBottom: '64px' }}>
-          <motion.span
-            className="font-mono"
-            style={{ color: 'var(--accent)', fontSize: '0.875rem', display: 'block', marginBottom: '16px' }}
-          >
-            03. My Work
-          </motion.span>
-          <h2 style={{ fontSize: 'clamp(2rem, 5vw, 3rem)', fontWeight: 700, marginBottom: '16px' }}>
-            Featured <span className="text-gradient">work</span>
-          </h2>
-          <p style={{ color: 'var(--text-secondary)', maxWidth: '600px', margin: '0 auto', fontSize: '1.125rem' }}>
-            A selection of projects that showcase my skills in full-stack development and mobile applications
-          </p>
-        </div>
+        <SectionHeader number="03" title="Featured Work" />
 
         {/* Project Cards Grid */}
         <motion.div
@@ -676,7 +669,7 @@ function ProjectsSection() {
                 <div style={{
                   position: 'absolute',
                   inset: 0,
-                  background: 'linear-gradient(to top, hsl(222 47% 5% / 0.8) 0%, transparent 50%)'
+                  background: `linear-gradient(to top, var(--bg-secondary) 0%, transparent 50%)`
                 }} />
                 {/* Icon Badge */}
                 <div style={{
@@ -686,13 +679,13 @@ function ProjectsSection() {
                   width: '48px',
                   height: '48px',
                   borderRadius: '12px',
-                  background: 'hsl(222 47% 12% / 0.9)',
+                  background: 'var(--bg-secondary)',
                   backdropFilter: 'blur(10px)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   fontSize: '1.5rem',
-                  border: '1px solid hsl(222 30% 20%)'
+                  border: '1px solid var(--border)'
                 }}>
                   {project.icon}
                 </div>
@@ -750,8 +743,8 @@ function ProjectsSection() {
                       justifyContent: 'center',
                       gap: '8px',
                       padding: '12px 20px',
-                      background: 'hsl(187 94% 43%)',
-                      color: 'hsl(222 47% 5%)',
+                      background: 'var(--accent)',
+                      color: isDarkMode ? 'hsl(222 47% 5%)' : 'white',
                       borderRadius: '10px',
                       fontWeight: 600,
                       fontSize: '0.9rem',
@@ -901,11 +894,25 @@ function ContactSection() {
   const ref = useRef(null)
   const isInView = useInView(ref, { once: true, margin: "-100px" })
   const [formData, setFormData] = useState({ name: '', email: '', message: '' })
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [submitStatus, setSubmitStatus] = useState(null) // 'success' | 'error' | null
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    alert('Thanks for reaching out!')
-    setFormData({ name: '', email: '', message: '' })
+    setIsSubmitting(true)
+    setSubmitStatus(null)
+
+    try {
+      await axios.post(`${API_URL}/messages`, formData)
+      setSubmitStatus('success')
+      setFormData({ name: '', email: '', message: '' })
+      setTimeout(() => setSubmitStatus(null), 5000)
+    } catch (error) {
+      console.error('Error sending message:', error)
+      setSubmitStatus('error')
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
@@ -955,9 +962,19 @@ function ContactSection() {
               <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 500, marginBottom: '8px', color: 'var(--text-primary)' }}>Message</label>
               <textarea value={formData.message} onChange={e => setFormData({ ...formData, message: e.target.value })} required placeholder="Your message..." rows={5} style={{ width: '100%', padding: '16px', borderRadius: '8px', background: 'var(--bg-secondary)', border: '1px solid var(--border)', color: 'var(--text-primary)', outline: 'none', resize: 'none' }} />
             </div>
-            <button type="submit" className="glow" style={{ width: '100%', padding: '16px', background: 'var(--accent)', color: 'white', borderRadius: '8px', fontWeight: 600, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
-              Send Message <Send size={18} />
+            <button type="submit" disabled={isSubmitting} className="glow" style={{ width: '100%', padding: '16px', background: isSubmitting ? 'hsl(187 94% 35%)' : 'var(--accent)', color: 'white', borderRadius: '8px', fontWeight: 600, border: 'none', cursor: isSubmitting ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', opacity: isSubmitting ? 0.7 : 1, transition: 'all 0.3s' }}>
+              {isSubmitting ? 'Sending...' : 'Send Message'} {!isSubmitting && <Send size={18} />}
             </button>
+            {submitStatus === 'success' && (
+              <div style={{ padding: '16px', background: 'hsl(142 76% 36% / 0.15)', border: '1px solid hsl(142 76% 36% / 0.3)', borderRadius: '8px', color: 'hsl(142 76% 36%)', textAlign: 'center', fontWeight: 500 }}>
+                ✓ Message sent successfully! I'll get back to you soon.
+              </div>
+            )}
+            {submitStatus === 'error' && (
+              <div style={{ padding: '16px', background: 'hsl(0 84% 60% / 0.15)', border: '1px solid hsl(0 84% 60% / 0.3)', borderRadius: '8px', color: 'hsl(0 84% 60%)', textAlign: 'center', fontWeight: 500 }}>
+                ✗ Failed to send message. Please try again or email me directly.
+              </div>
+            )}
           </form>
         </div>
       </motion.div>
