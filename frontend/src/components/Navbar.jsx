@@ -41,41 +41,7 @@ export default function Navbar({ isScrolled, isDarkMode, toggleTheme }) {
                     {"Siam"}
                 </Link>
 
-                <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
-                    {navLinks.map(link => {
-                        const href = getHref(link.href)
-                        return isHome ? (
-                            <a
-                                key={link.name}
-                                href={href}
-                                style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', fontWeight: 500, textDecoration: 'none', transition: 'color 0.3s' }}
-                                onMouseOver={e => e.target.style.color = 'var(--accent)'}
-                                onMouseOut={e => e.target.style.color = 'var(--text-secondary)'}
-                            >
-                                {link.name}
-                            </a>
-                        ) : (
-                            <Link
-                                key={link.name}
-                                to={href} // Hash link with router on non-home pages needs care. 
-                            // Actually `Link to="/#about"` works but might not scroll.
-                            // Standard `a` tag with full path `/#about` works better for reload/scroll.
-                            // Let's stick to standard anchor for hash links across pages or simple Link.
-                            // A safer bet for cross-page hash link is just href="/#about"
-                            >
-                                <span
-                                    style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', fontWeight: 500, textDecoration: 'none', transition: 'color 0.3s', cursor: 'pointer' }}
-                                    onMouseOver={e => e.target.style.color = 'var(--accent)'}
-                                    onMouseOut={e => e.target.style.color = 'var(--text-secondary)'}
-                                >
-                                    {link.name}
-                                </span>
-                            </Link>
-                        )
-                    })}
-                    {/* Re-implementing the mapping to use simple anchors for consistency and simplicity across pages */}
-                    <div style={{ display: 'flex', gap: '24px' }}></div>
-                </div>
+
 
                 {/* Let's restart the links part to be cleaner */}
                 <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
