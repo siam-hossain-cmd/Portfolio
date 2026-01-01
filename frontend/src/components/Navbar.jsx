@@ -1,10 +1,17 @@
-import { motion } from 'framer-motion'
-import { Sun, Moon } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { Sun, Moon, Menu, X } from 'lucide-react'
 import { Link, useLocation } from 'react-router-dom'
 
 export default function Navbar({ isScrolled, isDarkMode, toggleTheme }) {
     const location = useLocation()
     const isHome = location.pathname === '/'
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+
+    // Close mobile menu when route changes
+    useEffect(() => {
+        setIsMobileMenuOpen(false)
+    }, [location])
 
     const navLinks = [
         { name: "About", href: "#about" },
@@ -13,11 +20,6 @@ export default function Navbar({ isScrolled, isDarkMode, toggleTheme }) {
         { name: "Process", href: "#process" },
         { name: "Contact", href: "#contact" }
     ]
-
-    const getHref = (href) => {
-        if (isHome) return href
-        return `/${href}`
-    }
 
     return (
         <motion.nav
@@ -33,18 +35,17 @@ export default function Navbar({ isScrolled, isDarkMode, toggleTheme }) {
                 zIndex: 50,
                 padding: isScrolled ? '16px 0' : '24px 0',
                 transition: 'all 0.3s',
-                background: isScrolled ? undefined : 'transparent'
+                background: isScrolled || isMobileMenuOpen ? 'var(--bg-primary)' : 'transparent', // Solid background when menu open
+                backdropFilter: isScrolled ? 'blur(10px)' : 'none'
             }}
         >
             <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <Link to="/" className="text-gradient font-mono" style={{ fontSize: '1.5rem', fontWeight: 700, textDecoration: 'none' }}>
+                <Link to="/" className="text-gradient font-mono" style={{ fontSize: '1.5rem', fontWeight: 700, textDecoration: 'none', zIndex: 60 }}>
                     {"Siam"}
                 </Link>
 
-
-
-                {/* Let's restart the links part to be cleaner */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
+                {/* Desktop Menu */}
+                <div className="desktop-menu" style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
                     {navLinks.map(link => (
                         <a
                             key={link.name}
@@ -57,7 +58,6 @@ export default function Navbar({ isScrolled, isDarkMode, toggleTheme }) {
                         </a>
                     ))}
 
-                    {/* Theme Toggle Button */}
                     <motion.button
                         onClick={toggleTheme}
                         className="theme-toggle"
@@ -78,7 +78,90 @@ export default function Navbar({ isScrolled, isDarkMode, toggleTheme }) {
                         Hire Me
                     </Link>
                 </div>
+
+                {/* Mobile Menu Button */}
+                <div className="mobile-toggle" style={{ display: 'none', zIndex: 60 }}>
+                    <motion.button
+                        onClick={toggleTheme}
+                        style={{ background: 'none', border: 'none', color: 'var(--text-primary)', cursor: 'pointer', marginRight: '16px' }}
+                    >
+                        {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
+                    </motion.button>
+                    <button
+                        onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                        style={{ background: 'none', border: 'none', color: 'var(--text-primary)', cursor: 'pointer' }}
+                    >
+                        {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+                    </button>
+                </div>
             </div>
+
+            {/* Mobile Menu Overlay */}
+            <AnimatePresence>
+                {isMobileMenuOpen && (
+                    <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: '100vh' }}
+                        exit={{ opacity: 0, height: 0 }}
+                        transition={{ duration: 0.3 }}
+                        style={{
+                            position: 'fixed',
+                            top: 0,
+                            left: 0,
+                            right: 0,
+                            background: 'var(--bg-primary)',
+                            paddingTop: '100px',
+                            paddingLeft: '24px',
+                            paddingRight: '24px',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            gap: '24px',
+                            zIndex: 50,
+                            overflow: 'hidden'
+                        }}
+                    >
+                        {navLinks.map(link => (
+                            <a
+                                key={link.name}
+                                href={isHome ? link.href : `/${link.href}`}
+                                onClick={() => setIsMobileMenuOpen(false)}
+                                style={{ color: 'var(--text-primary)', fontSize: '1.5rem', fontWeight: 600, textDecoration: 'none' }}
+                            >
+                                {link.name}
+                            </a>
+                        ))}
+                        <Link
+                            to="/hire-me"
+                            onClick={() => setIsMobileMenuOpen(false)}
+                            style={{
+                                padding: '16px',
+                                background: 'var(--accent)',
+                                color: isDarkMode ? 'hsl(222 47% 5%)' : 'white',
+                                borderRadius: '12px',
+                                fontWeight: 700,
+                                fontSize: '1.25rem',
+                                textDecoration: 'none',
+                                textAlign: 'center',
+                                marginTop: '24px'
+                            }}
+                        >
+                            Hire Me
+                        </Link>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
+            <style>{`
+                @media (max-width: 768px) {
+                    .desktop-menu {
+                        display: none !important;
+                    }
+                    .mobile-toggle {
+                        display: flex !important;
+                        align-items: center;
+                    }
+                }
+            `}</style>
         </motion.nav>
     )
 }
