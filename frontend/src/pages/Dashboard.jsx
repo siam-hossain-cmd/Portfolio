@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import {
     Plus, Trash2, LogOut, LayoutGrid, Award, MessageSquare,
     X, Github, ExternalLink, Loader2, CheckCircle, AlertCircle,
-    Mail, Clock, User, Folder, Home, TrendingUp, Eye, Activity
+    Mail, Clock, User, Folder, Home, TrendingUp, Eye, Activity, Paperclip, Send
 } from 'lucide-react'
 import API_URL from '../config/api'
 
@@ -752,7 +752,24 @@ export default function Dashboard() {
                                                     {new Date(msg.createdAt).toLocaleDateString()}
                                                 </span>
                                             </div>
-                                            <p style={{ color: 'hsl(215 20% 65%)', lineHeight: 1.7 }}>{msg.message}</p>
+                                            <p style={{ color: 'hsl(215 20% 65%)', lineHeight: 1.7, marginBottom: '16px' }}>{msg.message || msg.details}</p>
+
+                                            {msg.attachmentUrl && (
+                                                <div style={{ marginBottom: '16px' }}>
+                                                    <a href={msg.attachmentUrl} target="_blank" rel="noopener noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', color: 'hsl(187 94% 43%)', textDecoration: 'none', fontSize: '0.875rem', padding: '8px 12px', background: 'hsl(187 94% 43% / 0.1)', borderRadius: '8px' }}>
+                                                        <Paperclip size={16} /> View Attachment
+                                                    </a>
+                                                </div>
+                                            )}
+
+                                            <a
+                                                href={`mailto:${msg.email}?subject=Re: ${msg.subject || 'Portfolio Inquiry'}&body=Hi ${msg.name || 'there'},%0D%0A%0D%0AThank you for your message regarding "${msg.projectType || 'your project'}".%0D%0A%0D%0ABest regards,%0D%0ASiam`}
+                                                style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '8px 16px', background: 'hsl(222 30% 18%)', color: 'white', textDecoration: 'none', borderRadius: '8px', fontSize: '0.875rem', fontWeight: 500, transition: 'background 0.2s' }}
+                                                onMouseOver={e => e.target.style.background = 'hsl(222 30% 25%)'}
+                                                onMouseOut={e => e.target.style.background = 'hsl(222 30% 18%)'}
+                                            >
+                                                <Send size={16} /> Reply via Email
+                                            </a>
                                         </motion.div>
                                     ))}
                                     {messages.length === 0 && (

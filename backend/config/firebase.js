@@ -19,10 +19,12 @@ if (process.env.FIREBASE_SERVICE_ACCOUNT) {
 }
 
 admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount)
+    credential: admin.credential.cert(serviceAccount),
+    storageBucket: 'portfolio-3faa4.firebasestorage.app'
 });
 
 const db = admin.firestore();
+const bucket = admin.storage().bucket();
 
-module.exports = { admin, db };
+module.exports = { admin, db, bucket };
 
