@@ -214,64 +214,10 @@ function App() {
 }
 
 
-// Navbar Component
-function Navbar({ isScrolled, isDarkMode, toggleTheme }) {
-  const navLinks = [
-    { name: "About", href: "#about" },
-    { name: "Skills", href: "#skills" },
-    { name: "Projects", href: "#projects" },
-    { name: "Process", href: "#process" },
-    { name: "Contact", href: "#contact" }
-  ]
+// Navbar and Footer are now imported
+import Navbar from './components/Navbar'
+import Footer from './components/Footer'
 
-  return (
-    <motion.nav
-      initial={{ y: -100 }}
-      animate={{ y: 0 }}
-      transition={{ duration: 0.5 }}
-      className={isScrolled ? "glass" : ""}
-      style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 50, padding: isScrolled ? '16px 0' : '24px 0', transition: 'all 0.3s', background: isScrolled ? undefined : 'transparent' }}
-    >
-      <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <a href="#" className="text-gradient font-mono" style={{ fontSize: '1.5rem', fontWeight: 700, textDecoration: 'none' }}>
-          {"Siam"}
-        </a>
-
-        <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
-          {navLinks.map(link => (
-            <a key={link.name} href={link.href} style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', fontWeight: 500, textDecoration: 'none', transition: 'color 0.3s' }}
-              onMouseOver={e => e.target.style.color = 'var(--accent)'}
-              onMouseOut={e => e.target.style.color = 'var(--text-secondary)'}
-            >
-              {link.name}
-            </a>
-          ))}
-
-          {/* Theme Toggle Button */}
-          <motion.button
-            onClick={toggleTheme}
-            className="theme-toggle"
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.95 }}
-            aria-label="Toggle theme"
-          >
-            <motion.div
-              initial={false}
-              animate={{ rotate: isDarkMode ? 0 : 180 }}
-              transition={{ duration: 0.3 }}
-            >
-              {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
-            </motion.div>
-          </motion.button>
-
-          <a href="#contact" className="glow" style={{ padding: '10px 20px', background: 'var(--accent)', color: isDarkMode ? 'hsl(222 47% 5%)' : 'white', borderRadius: '8px', fontWeight: 600, fontSize: '0.875rem', textDecoration: 'none' }}>
-            Hire Me
-          </a>
-        </div>
-      </div>
-    </motion.nav>
-  )
-}
 
 // Hero Section with side-by-side layout
 function HeroSection() {
@@ -357,7 +303,7 @@ function HeroSection() {
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.5 }} style={{ display: 'flex', gap: '16px' }}>
               {[
                 { Icon: Github, href: 'https://github.com/siam-hossain-cmd' },
-                { Icon: Linkedin, href: 'https://linkedin.com/in/hossainsiam' },
+                { Icon: Linkedin, href: 'https://www.linkedin.com/in/siam-hossain-66295439b' },
                 { Icon: Mail, href: 'mailto:s.siamhossain.h@gmail.com' }
               ].map((item, i) => (
                 <a key={i} href={item.href} target={item.href.startsWith('mailto') ? undefined : '_blank'} rel="noopener noreferrer" style={{ padding: '12px', borderRadius: '50%', border: '1px solid var(--border)', color: 'var(--text-primary)', background: 'var(--bg-secondary)', transition: 'all 0.3s' }}
@@ -934,7 +880,7 @@ function ContactSection() {
               { icon: Phone, label: 'WhatsApp', value: '+601123501201', href: 'https://wa.me/601123501201' },
               { icon: Mail, label: 'Email', value: 's.siamhossain.h@gmail.com', href: 'mailto:s.siamhossain.h@gmail.com' },
               { icon: Github, label: 'GitHub', value: 'github.com/siam-hossain-cmd', href: 'https://github.com/siam-hossain-cmd' },
-              { icon: Linkedin, label: 'LinkedIn', value: 'linkedin.com/in/hossainsiam', href: 'https://linkedin.com/in/hossainsiam' },
+              { icon: Linkedin, label: 'LinkedIn', value: 'linkedin.com/in/siam-hossain...', href: 'https://www.linkedin.com/in/siam-hossain-66295439b' },
               { icon: MapPin, label: 'Location', value: 'Dhaka, Bangladesh', href: null }
             ].map((item, i) => (
               <a key={i} href={item.href} target={item.href && !item.href.startsWith('mailto') ? '_blank' : undefined} rel="noopener noreferrer" className="glass" style={{ padding: '16px', borderRadius: '12px', display: 'flex', alignItems: 'center', gap: '16px', textDecoration: 'none', cursor: item.href ? 'pointer' : 'default', transition: 'transform 0.2s' }} onMouseOver={e => item.href && (e.currentTarget.style.transform = 'translateX(8px)')} onMouseOut={e => e.currentTarget.style.transform = 'translateX(0)'}>
@@ -983,23 +929,7 @@ function ContactSection() {
 }
 
 // Footer
-function Footer() {
-  return (
-    <footer style={{ padding: '40px 24px', borderTop: '1px solid hsl(222 30% 18%)' }}>
-      <div style={{ maxWidth: '1200px', margin: '0 auto', textAlign: 'center' }}>
-        <a href="#" className="text-gradient font-mono" style={{ fontSize: '1.25rem', fontWeight: 700, textDecoration: 'none', display: 'block', marginBottom: '16px' }}>
-          {"Siam"}
-        </a>
-        <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem' }}>
-          Designed & Built by Siam Hossain
-        </p>
-        <p style={{ color: 'hsl(215 20% 45%)', fontSize: '0.75rem', marginTop: '8px' }}>
-          © {new Date().getFullYear()} All Rights Reserved
-        </p>
-      </div>
-    </footer>
-  )
-}
+// Footer is imported from ./components/Footer
 
 // Section Header Component
 function SectionHeader({ number, title }) {
