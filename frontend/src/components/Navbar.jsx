@@ -40,7 +40,8 @@ export default function Navbar({ isScrolled, isDarkMode, toggleTheme }) {
             }}
         >
             <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <Link to="/" className="text-gradient font-mono" style={{ fontSize: '1.5rem', fontWeight: 700, textDecoration: 'none', zIndex: 60 }}>
+                <Link to="/" className="text-gradient font-mono" style={{ fontSize: '1.5rem', fontWeight: 700, textDecoration: 'none', zIndex: 60, display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <img src="/logo.png" alt="Siam Logo" style={{ height: '40px', width: 'auto' }} />
                     {"Siam"}
                 </Link>
 
