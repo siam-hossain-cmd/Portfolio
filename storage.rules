@@ -1,0 +1,26 @@
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+    
+    // Helper: check if request is from an authenticated admin
+    function isAdmin() {
+      return request.auth != null && 
+        (request.auth.token.role == 'Super Admin' || 
+         request.auth.token.role == 'Admin' || 
+         request.auth.token.role == 'Editor');
+    }
+
+    // Portfolio files: Public read, Admin write
+    match /portfolio/{allPaths=**} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    
+    // Fallback rule for other assets
+    match /{allPaths=**} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+  }
+}

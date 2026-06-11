@@ -14,11 +14,13 @@ export default function Navbar({ isScrolled, isDarkMode, toggleTheme }) {
     }, [location])
 
     const navLinks = [
-        { name: "About", href: "#about" },
-        { name: "Skills", href: "#skills" },
-        { name: "Projects", href: "#projects" },
-        { name: "Process", href: "#process" },
-        { name: "Contact", href: "#contact" }
+        { name: "About", href: "#about", isPage: false },
+        { name: "Skills", href: "#skills", isPage: false },
+        { name: "Projects", href: "#projects", isPage: false },
+        { name: "Services", href: "#services", isPage: false },
+        { name: "Experience", href: "#experience", isPage: false },
+        { name: "Blog", href: "/blog", isPage: true },
+        { name: "Contact", href: "#contact", isPage: false }
     ]
 
     return (
@@ -41,13 +43,23 @@ export default function Navbar({ isScrolled, isDarkMode, toggleTheme }) {
         >
             <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <Link to="/" className="text-gradient font-mono" style={{ fontSize: '1.5rem', fontWeight: 700, textDecoration: 'none', zIndex: 60, display: 'flex', alignItems: 'center', gap: '12px' }}>
-                    <img src="/logo.png" alt="Siam Logo" style={{ height: '40px', width: 'auto' }} />
+                    <img src="/logo.webp" alt="Siam Logo" style={{ height: '40px', width: 'auto' }} />
                     {"Siam"}
                 </Link>
 
                 {/* Desktop Menu */}
                 <div className="desktop-menu" style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
-                    {navLinks.map(link => (
+                    {navLinks.map(link => link.isPage ? (
+                        <Link
+                            key={link.name}
+                            to={link.href}
+                            style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', fontWeight: 500, textDecoration: 'none', transition: 'color 0.3s' }}
+                            onMouseOver={e => e.target.style.color = 'var(--accent)'}
+                            onMouseOut={e => e.target.style.color = 'var(--text-secondary)'}
+                        >
+                            {link.name}
+                        </Link>
+                    ) : (
                         <a
                             key={link.name}
                             href={isHome ? link.href : `/${link.href}`}
@@ -121,7 +133,16 @@ export default function Navbar({ isScrolled, isDarkMode, toggleTheme }) {
                             overflow: 'hidden'
                         }}
                     >
-                        {navLinks.map(link => (
+                        {navLinks.map(link => link.isPage ? (
+                            <Link
+                                key={link.name}
+                                to={link.href}
+                                onClick={() => setIsMobileMenuOpen(false)}
+                                style={{ color: 'var(--text-primary)', fontSize: '1.5rem', fontWeight: 600, textDecoration: 'none' }}
+                            >
+                                {link.name}
+                            </Link>
+                        ) : (
                             <a
                                 key={link.name}
                                 href={isHome ? link.href : `/${link.href}`}

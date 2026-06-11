@@ -1,0 +1,8 @@
+node_modules
+npm-debug.log
+logs/
+.env
+portfolio-3faa4-*.json
+Dockerfile
+.git
+.gitignore

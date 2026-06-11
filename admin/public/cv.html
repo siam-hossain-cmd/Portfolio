@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Siam Hossain - CV</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #f8fafc;
+      color: #1e293b;
+      line-height: 1.6;
+    }
+    
+    .cv-container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: white;
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    }
+    
+    /* Header */
+    .header {
+      background: linear-gradient(135deg, #0d1b2a 0%, #1b3a4b 100%);
+      color: white;
+      padding: 40px;
+      display: flex;
+      gap: 30px;
+      align-items: center;
+    }
+    
+    .photo {
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+      border: 4px solid #00b4d8;
+      object-fit: cover;
+      flex-shrink: 0;
+    }
+    
+    .header-info h1 {
+      font-size: 2.2rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    
+    .header-info .role {
+      font-size: 1.1rem;
+      color: #00b4d8;
+      font-weight: 500;
+      margin-bottom: 16px;
+    }
+    
+    .contact-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      font-size: 0.9rem;
+      color: #94a3b8;
+    }
+    
+    .contact-row a {
+      color: #94a3b8;
+      text-decoration: none;
+    }
+    
+    .contact-row a:hover {
+      color: #00b4d8;
+    }
+    
+    /* Main Content */
+    .main-content {
+      display: grid;
+      grid-template-columns: 1fr 280px;
+      gap: 0;
+    }
+    
+    .left-column {
+      padding: 30px 35px;
+    }
+    
+    .right-column {
+      background: #f1f5f9;
+      padding: 30px 25px;
+    }
+    
+    /* Section Styling */
+    .section {
+      margin-bottom: 28px;
+    }
+    
+    .section-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #00b4d8;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin-bottom: 16px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid #00b4d8;
+    }
+    
+    /* About */
+    .about-text {
+      color: #475569;
+      font-size: 0.95rem;
+      line-height: 1.7;
+    }
+    
+    /* Experience & Education */
+    .item {
+      margin-bottom: 20px;
+    }
+    
+    .item-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 6px;
+    }
+    
+    .item-title {
+      font-weight: 600;
+      font-size: 1rem;
+      color: #1e293b;
+    }
+    
+    .item-date {
+      font-size: 0.8rem;
+      color: #00b4d8;
+      font-weight: 500;
+    }
+    
+    .item-subtitle {
+      font-size: 0.9rem;
+      color: #64748b;
+      margin-bottom: 8px;
+    }
+    
+    .item-description {
+      font-size: 0.85rem;
+      color: #64748b;
+    }
+    
+    .item-description ul {
+      padding-left: 18px;
+    }
+    
+    .item-description li {
+      margin-bottom: 4px;
+    }
+    
+    /* Skills */
+    .skill-category {
+      margin-bottom: 18px;
+    }
+    
+    .skill-category-title {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #1e293b;
+      margin-bottom: 8px;
+    }
+    
+    .skill-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    
+    .skill-tag {
+      background: #e2e8f0;
+      color: #475569;
+      padding: 4px 10px;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 500;
+    }
+    
+    /* Contact Sidebar */
+    .contact-item {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 12px;
+      font-size: 0.85rem;
+      color: #475569;
+      word-break: break-all;
+    }
+    
+    .contact-icon {
+      width: 18px;
+      flex-shrink: 0;
+      color: #00b4d8;
+    }
+    
+    /* Languages */
+    .language-item {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      font-size: 0.85rem;
+    }
+    
+    .language-level {
+      color: #64748b;
+    }
+    
+    /* Print Styles */
+    @media print {
+      body {
+        background: white;
+      }
+      .cv-container {
+        box-shadow: none;
+      }
+      @page {
+        margin: 0;
+        size: A4;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="cv-container">
+    <!-- Header -->
+    <div class="header">
+      <img src="profile.png" alt="Siam Hossain" class="photo">
+      <div class="header-info">
+        <h1>Siam Hossain</h1>
+        <p class="role">Full-Stack Developer | Flutter Developer</p>
+        <div class="contact-row">
+          <span>📧 s.siamhossain.h@gmail.com</span>
+          <span>📱 +601123501201</span>
+          <span>📍 Dhaka, Bangladesh</span>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="main-content">
+      <!-- Left Column -->
+      <div class="left-column">
+        <!-- About -->
+        <div class="section">
+          <h2 class="section-title">About Me</h2>
+          <p class="about-text">
+            Passionate Software Engineering student with expertise in full-stack web development and Flutter mobile app development. I enjoy turning complex problems into simple, beautiful solutions. Experienced in building scalable applications using modern technologies and best practices.
+          </p>
+        </div>
+        
+        <!-- Experience -->
+        <div class="section">
+          <h2 class="section-title">Experience</h2>
+          
+          <div class="item">
+            <div class="item-header">
+              <span class="item-title">Full-Stack Developer</span>
+              <span class="item-date">2023 - Present</span>
+            </div>
+            <p class="item-subtitle">Freelance</p>
+            <div class="item-description">
+              <ul>
+                <li>Developed and deployed full-stack web applications using React, Node.js, and MongoDB</li>
+                <li>Built cross-platform mobile applications using Flutter and Dart</li>
+                <li>Implemented RESTful APIs and integrated third-party services</li>
+              </ul>
+            </div>
+          </div>
+          
+          <div class="item">
+            <div class="item-header">
+              <span class="item-title">Mobile App Developer</span>
+              <span class="item-date">2022 - 2023</span>
+            </div>
+            <p class="item-subtitle">Project-Based</p>
+            <div class="item-description">
+              <ul>
+                <li>Developed Flutter applications for both iOS and Android platforms</li>
+                <li>Integrated Firebase for authentication, real-time database, and cloud functions</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Education -->
+        <div class="section">
+          <h2 class="section-title">Education</h2>
+          
+          <div class="item">
+            <div class="item-header">
+              <span class="item-title">Bachelor in Software Engineering</span>
+              <span class="item-date">2021 - Present</span>
+            </div>
+            <p class="item-subtitle">University</p>
+            <p class="item-description">
+              Focused on software development, algorithms, and system design.
+            </p>
+          </div>
+        </div>
+        
+        <!-- Projects -->
+        <div class="section">
+          <h2 class="section-title">Key Projects</h2>
+          
+          <div class="item">
+            <div class="item-header">
+              <span class="item-title">Clean Dhaka</span>
+            </div>
+            <p class="item-description">
+              Mobile application for garbage pickup and house cleaning services with real-time tracking and route optimization.
+            </p>
+          </div>
+          
+          <div class="item">
+            <div class="item-header">
+              <span class="item-title">Hotel Management System</span>
+            </div>
+            <p class="item-description">
+              Full-stack hotel booking and management system with admin dashboard, room management, and payment integration.
+            </p>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Right Column -->
+      <div class="right-column">
+        <!-- Contact -->
+        <div class="section">
+          <h2 class="section-title">Contact</h2>
+          <div class="contact-item">
+            <span class="contact-icon">📧</span>
+            <span>s.siamhossain.h@gmail.com</span>
+          </div>
+          <div class="contact-item">
+            <span class="contact-icon">📱</span>
+            <span>+601123501201</span>
+          </div>
+          <div class="contact-item">
+            <span class="contact-icon">🔗</span>
+            <span>github.com/siam-hossain-cmd</span>
+          </div>
+          <div class="contact-item">
+            <span class="contact-icon">💼</span>
+            <span>linkedin.com/in/hossainsiam</span>
+          </div>
+        </div>
+        
+        <!-- Skills -->
+        <div class="section">
+          <h2 class="section-title">Skills</h2>
+          
+          <div class="skill-category">
+            <h3 class="skill-category-title">Frontend</h3>
+            <div class="skill-tags">
+              <span class="skill-tag">React</span>
+              <span class="skill-tag">Next.js</span>
+              <span class="skill-tag">TypeScript</span>
+              <span class="skill-tag">Tailwind</span>
+            </div>
+          </div>
+          
+          <div class="skill-category">
+            <h3 class="skill-category-title">Backend</h3>
+            <div class="skill-tags">
+              <span class="skill-tag">Node.js</span>
+              <span class="skill-tag">Express</span>
+              <span class="skill-tag">Python</span>
+            </div>
+          </div>
+          
+          <div class="skill-category">
+            <h3 class="skill-category-title">Mobile</h3>
+            <div class="skill-tags">
+              <span class="skill-tag">Flutter</span>
+              <span class="skill-tag">Dart</span>
+            </div>
+          </div>
+          
+          <div class="skill-category">
+            <h3 class="skill-category-title">Database</h3>
+            <div class="skill-tags">
+              <span class="skill-tag">MongoDB</span>
+              <span class="skill-tag">MySQL</span>
+              <span class="skill-tag">Firebase</span>
+            </div>
+          </div>
+          
+          <div class="skill-category">
+            <h3 class="skill-category-title">DevOps</h3>
+            <div class="skill-tags">
+              <span class="skill-tag">Git</span>
+              <span class="skill-tag">Docker</span>
+              <span class="skill-tag">AWS</span>
+              <span class="skill-tag">Vercel</span>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Languages -->
+        <div class="section">
+          <h2 class="section-title">Languages</h2>
+          <div class="language-item">
+            <span>Bengali</span>
+            <span class="language-level">Native</span>
+          </div>
+          <div class="language-item">
+            <span>English</span>
+            <span class="language-level">Fluent</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

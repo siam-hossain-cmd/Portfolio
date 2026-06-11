@@ -5,3 +5,7 @@ dist
 build
 portfolio-reference
 portfolio-3faa4-firebase-adminsdk-fbsvc-d5e649c9cb.json
+firebase-service-account.json
+*firebase-service-account*.json
+logs/
+*.log

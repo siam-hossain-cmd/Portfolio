@@ -1,13 +1,13 @@
-import { useState, useEffect } from 'react'
-import { motion } from 'framer-motion'
-import { Mail, Phone, Linkedin, Send, CheckCircle, AlertCircle, ChevronDown, Paperclip } from 'lucide-react'
-import axios from 'axios'
-import API_URL from '../config/api'
-import Navbar from '../components/Navbar'
-import Footer from '../components/Footer'
+import { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
+import { Mail, Phone, Linkedin, Send, CheckCircle, AlertCircle, ChevronDown, Paperclip } from 'lucide-react';
+import axiosInstance from '../config/axiosInstance';
+import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
+import { useTheme } from '../context/ThemeContext';
 
 export default function HireMe() {
-    const [isScrolled, setIsScrolled] = useState(false)
+    const [isScrolled, setIsScrolled] = useState(false);
     const [formData, setFormData] = useState({
         name: '',
         email: '',
@@ -15,58 +15,58 @@ export default function HireMe() {
         budget: '',
         details: '',
         attachmentUrl: ''
-    })
-    const [file, setFile] = useState(null)
-    const [loading, setLoading] = useState(false)
-    const [status, setStatus] = useState(null)
+    });
+    const [file, setFile] = useState(null);
+    const [loading, setLoading] = useState(false);
+    const [status, setStatus] = useState(null);
 
-    // Theme state management (default dark)
-    const [isDarkMode, setIsDarkMode] = useState(true)
+    // Get theme context
+    const { isDarkMode, toggleTheme } = useTheme();
 
     useEffect(() => {
-        const handleScroll = () => setIsScrolled(window.scrollY > 50)
-        window.addEventListener('scroll', handleScroll)
-        return () => window.removeEventListener('scroll', handleScroll)
-    }, [])
+        const handleScroll = () => setIsScrolled(window.scrollY > 50);
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
 
     const handleSubmit = async (e) => {
-        e.preventDefault()
-        setLoading(true)
-        setStatus(null)
+        e.preventDefault();
+        setLoading(true);
+        setStatus(null);
 
         try {
-            let attachmentUrl = ''
+            let attachmentUrl = '';
             if (file) {
-                const uploadData = new FormData()
-                uploadData.append('file', file)
+                const uploadData = new FormData();
+                uploadData.append('file', file);
 
-                // Upload file to backend
-                const uploadRes = await axios.post(`${API_URL}/upload`, uploadData, {
+                // Upload file to backend (public endpoint, but uses axiosInstance)
+                const uploadRes = await axiosInstance.post('/upload', uploadData, {
                     headers: { 'Content-Type': 'multipart/form-data' }
-                })
-                attachmentUrl = uploadRes.data.url
+                });
+                attachmentUrl = uploadRes.data.url;
             }
 
-            await axios.post(`${API_URL}/messages`, {
+            await axiosInstance.post('/messages', {
                 ...formData,
                 attachmentUrl,
                 subject: `New Hire Inquiry: ${formData.projectType}`
-            })
+            });
 
-            setStatus('success')
-            setFormData({ name: '', email: '', projectType: 'Web Development', budget: '', details: '', attachmentUrl: '' })
-            setFile(null)
-            // Reset file input manually
-            const fileInput = document.getElementById('file-input')
-            if (fileInput) fileInput.value = ''
+            setStatus('success');
+            setFormData({ name: '', email: '', projectType: 'Web Development', budget: '', details: '', attachmentUrl: '' });
+            setFile(null);
+            
+            const fileInput = document.getElementById('file-input');
+            if (fileInput) fileInput.value = '';
 
-            setTimeout(() => setStatus(null), 5000)
+            setTimeout(() => setStatus(null), 5000);
         } catch (err) {
-            console.error(err)
-            setStatus('error')
+            console.error('Submission failed:', err);
+            setStatus('error');
         }
-        setLoading(false)
-    }
+        setLoading(false);
+    };
 
     const inputStyle = {
         width: '100%',
@@ -78,11 +78,11 @@ export default function HireMe() {
         fontSize: '1rem',
         outline: 'none',
         transition: 'border-color 0.3s'
-    }
+    };
 
     return (
         <div style={{ minHeight: '100vh', background: 'hsl(222 47% 5%)', color: 'white', overflowX: 'hidden' }}>
-            <Navbar isScrolled={isScrolled} isDarkMode={true} toggleTheme={() => { }} />
+            <Navbar isScrolled={isScrolled} isDarkMode={isDarkMode} toggleTheme={toggleTheme} />
 
             <div style={{ paddingTop: '120px', paddingBottom: '80px', maxWidth: '1200px', margin: '0 auto', paddingLeft: '24px', paddingRight: '24px' }}>
                 <motion.div
@@ -183,7 +183,7 @@ export default function HireMe() {
                                 />
                                 <Paperclip size={20} style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: 'hsl(215 20% 65%)', pointerEvents: 'none' }} />
                             </div>
-                            <span style={{ fontSize: '0.75rem', color: 'hsl(215 20% 50%)' }}>Accepted formats: PDF, DOC, JPG, PNG</span>
+                            <span style={{ fontSize: '0.75rem', color: 'hsl(215 20% 50%)' }}>Accepted formats: PDF, DOC, JPG, PNG (Max 5MB)</span>
                         </div>
 
                         <button
@@ -233,8 +233,8 @@ export default function HireMe() {
                     </div>
                 </div>
 
-                <Footer />
+                <Footer isDarkMode={isDarkMode} />
             </div>
         </div>
-    )
+    );
 }
