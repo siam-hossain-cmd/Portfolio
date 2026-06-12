@@ -18,7 +18,7 @@ export default function ProcessSection() {
     return (
         <section id="process" ref={ref} style={{ padding: '100px 24px' }}>
             <motion.div initial={{ opacity: 0, y: 40 }} animate={isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6 }} style={{ maxWidth: '1200px', margin: '0 auto' }}>
-                <SectionHeader number="04" title="Development Process" />
+                <SectionHeader number="05" title="Development Process" />
 
                 <div style={{ position: 'relative' }}>
                     <div style={{ position: 'absolute', left: '32px', top: 0, bottom: 0, width: '1px', background: 'hsl(222 30% 18%)' }} />

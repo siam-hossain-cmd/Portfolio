@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowDown, Download, Github, Linkedin, Mail } from 'lucide-react';
+import { ArrowDown, Download, Github, Linkedin, Mail, Facebook } from 'lucide-react';
+import useApiData from '../../hooks/useApiData';
 
 const roles = [
     "Software Engineering Student",
@@ -10,6 +11,7 @@ const roles = [
 ];
 
 export default function HeroSection() {
+    const { data: settings } = useApiData('settings');
     const [displayText, setDisplayText] = useState('');
     const [roleIndex, setRoleIndex] = useState(0);
     const [isDeleting, setIsDeleting] = useState(false);
@@ -34,6 +36,24 @@ export default function HeroSection() {
         }, isDeleting ? 50 : 100);
         return () => clearTimeout(timeout);
     }, [displayText, isDeleting, roleIndex]);
+
+    const defaultSocials = {
+        github: 'https://github.com/siam-hossain-cmd',
+        linkedin: 'https://www.linkedin.com/in/siam-hossain-66295439b',
+        email: 's.siamhossain.h@gmail.com'
+    };
+
+    const socials = settings?.socialLinks || {};
+    const githubLink = socials.github || defaultSocials.github;
+    const linkedinLink = socials.linkedin || defaultSocials.linkedin;
+    const emailLink = socials.email || defaultSocials.email;
+    const facebookLink = socials.facebook;
+
+    const socialItems = [];
+    if (githubLink) socialItems.push({ Icon: Github, href: githubLink });
+    if (linkedinLink) socialItems.push({ Icon: Linkedin, href: linkedinLink });
+    if (facebookLink) socialItems.push({ Icon: Facebook, href: facebookLink });
+    if (emailLink) socialItems.push({ Icon: Mail, href: emailLink.startsWith('mailto') ? emailLink : `mailto:${emailLink}` });
 
     return (
         <section style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', overflow: 'hidden' }}>
@@ -61,12 +81,6 @@ export default function HeroSection() {
 
                     {/* Content - Right Side */}
                     <div style={{ flex: 1, minWidth: '300px' }}>
-                        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} style={{ marginBottom: '24px' }}>
-                            <span className="font-mono" style={{ display: 'inline-block', padding: '8px 16px', borderRadius: '50px', border: '1px solid var(--accent)', color: 'var(--accent)', fontSize: '0.875rem' }}>
-                                Available for freelance work
-                            </span>
-                        </motion.div>
-
                         <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }} style={{ fontSize: 'clamp(2.5rem, 5vw, 4rem)', fontWeight: 700, marginBottom: '16px', lineHeight: 1.1, color: 'var(--text-primary)' }}>
                             Hi, I'm <span className="text-gradient">Siam Hossain</span>
                         </motion.h1>
@@ -90,11 +104,7 @@ export default function HeroSection() {
                         </motion.div>
 
                         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.5 }} style={{ display: 'flex', gap: '16px' }}>
-                            {[
-                                { Icon: Github, href: 'https://github.com/siam-hossain-cmd' },
-                                { Icon: Linkedin, href: 'https://www.linkedin.com/in/siam-hossain-66295439b' },
-                                { Icon: Mail, href: 'mailto:s.siamhossain.h@gmail.com' }
-                            ].map((item, i) => (
+                            {socialItems.map((item, i) => (
                                 <a key={i} href={item.href} target={item.href.startsWith('mailto') ? undefined : '_blank'} rel="noopener noreferrer" style={{ padding: '12px', borderRadius: '50%', border: '1px solid var(--border)', color: 'var(--text-primary)', background: 'var(--bg-secondary)', transition: 'all 0.3s' }}
                                     onMouseOver={e => { e.currentTarget.style.borderColor = 'var(--accent)'; e.currentTarget.style.color = 'var(--accent)' }}
                                     onMouseOut={e => { e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.color = 'var(--text-primary)' }}

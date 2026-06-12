@@ -14,7 +14,7 @@ router.get('/', async (req, res, next) => {
             // Return default settings structure
             return res.json({
                 personalInfo: { name: 'Siam Hossain', title: 'Full-Stack Developer', bio: '', profileImage: '', roles: ['Full-Stack Developer', 'Flutter Developer'] },
-                socialLinks: { github: '', linkedin: '', twitter: '', website: '', whatsapp: '', email: '' },
+                socialLinks: { github: '', linkedin: '', twitter: '', website: '', whatsapp: '', email: '', facebook: '' },
                 resumeUrl: '',
                 seo: { siteTitle: 'Siam Hossain — Portfolio', siteDescription: '', ogImage: '', keywords: '' },
                 contactInfo: { email: '', phone: '', location: '', availability: 'Available for freelance' },

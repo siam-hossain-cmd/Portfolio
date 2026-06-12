@@ -18,7 +18,6 @@ export default function Navbar({ isScrolled, isDarkMode, toggleTheme }) {
         { name: "Skills", href: "#skills", isPage: false },
         { name: "Projects", href: "#projects", isPage: false },
         { name: "Services", href: "#services", isPage: false },
-        { name: "Experience", href: "#experience", isPage: false },
         { name: "Blog", href: "/blog", isPage: true },
         { name: "Contact", href: "#contact", isPage: false }
     ]

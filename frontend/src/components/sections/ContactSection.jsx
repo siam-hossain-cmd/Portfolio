@@ -1,8 +1,9 @@
 import { useState, useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
-import { Phone, Mail, Github, Linkedin, MapPin, Send } from 'lucide-react';
+import { Phone, Mail, Github, Linkedin, MapPin, Send, Facebook } from 'lucide-react';
 import axios from 'axios';
 import API_URL from '../../config/api';
+import useApiData from '../../hooks/useApiData';
 
 export default function ContactSection() {
     const ref = useRef(null);
@@ -29,11 +30,64 @@ export default function ContactSection() {
         }
     };
 
+    const { data: settings } = useApiData('settings');
+
+    const defaultContact = {
+        whatsapp: 'https://wa.me/601123501201',
+        whatsappLabel: '+601123501201',
+        email: 's.siamhossain.h@gmail.com',
+        github: 'github.com/siam-hossain-cmd',
+        githubHref: 'https://github.com/siam-hossain-cmd',
+        linkedin: 'linkedin.com/in/siam-hossain...',
+        linkedinHref: 'https://www.linkedin.com/in/siam-hossain-66295439b',
+        location: 'Dhaka, Bangladesh'
+    };
+
+    const socials = settings?.socialLinks || {};
+    const contactInfo = settings?.contactInfo || {};
+
+    const whatsappVal = contactInfo.phone || defaultContact.whatsappLabel;
+    const whatsappUrl = socials.whatsapp || defaultContact.whatsapp;
+
+    const emailVal = contactInfo.email || defaultContact.email;
+    const emailUrl = emailVal.startsWith('mailto') ? emailVal : `mailto:${emailVal}`;
+
+    const githubUrl = socials.github || defaultContact.githubHref;
+    const githubVal = githubUrl.replace('https://', '').replace('http://', '');
+
+    const linkedinUrl = socials.linkedin || defaultContact.linkedinHref;
+    const linkedinVal = linkedinUrl.replace('https://', '').replace('http://', '').slice(0, 24) + (linkedinUrl.length > 24 ? '...' : '');
+
+    const facebookUrl = socials.facebook;
+    const facebookVal = facebookUrl ? facebookUrl.replace('https://', '').replace('http://', '').slice(0, 24) + (facebookUrl.length > 24 ? '...' : '') : '';
+
+    const locationVal = contactInfo.location || defaultContact.location;
+
+    const contactItems = [];
+    if (whatsappUrl && whatsappVal) {
+        contactItems.push({ icon: Phone, label: 'WhatsApp', value: whatsappVal, href: whatsappUrl });
+    }
+    if (emailVal) {
+        contactItems.push({ icon: Mail, label: 'Email', value: emailVal, href: emailUrl });
+    }
+    if (githubUrl) {
+        contactItems.push({ icon: Github, label: 'GitHub', value: githubVal, href: githubUrl });
+    }
+    if (linkedinUrl) {
+        contactItems.push({ icon: Linkedin, label: 'LinkedIn', value: linkedinVal, href: linkedinUrl });
+    }
+    if (facebookUrl) {
+        contactItems.push({ icon: Facebook, label: 'Facebook', value: facebookVal, href: facebookUrl });
+    }
+    if (locationVal) {
+        contactItems.push({ icon: MapPin, label: 'Location', value: locationVal, href: null });
+    }
+
     return (
         <section id="contact" ref={ref} style={{ padding: '100px 24px' }}>
             <motion.div initial={{ opacity: 0, y: 40 }} animate={isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6 }} style={{ maxWidth: '900px', margin: '0 auto' }}>
                 <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '16px', marginBottom: '48px' }}>
-                    <span className="font-mono" style={{ color: 'var(--accent)' }}>05.</span>
+                    <span className="font-mono" style={{ color: 'var(--accent)' }}>06.</span>
                     <h2 style={{ fontSize: '2rem', fontWeight: 700 }}>Get In Touch</h2>
                 </div>
 
@@ -44,13 +98,7 @@ export default function ContactSection() {
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '48px' }}>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                         <h3 style={{ fontSize: '1.25rem', fontWeight: 600, marginBottom: '8px' }}>Contact Information</h3>
-                        {[
-                            { icon: Phone, label: 'WhatsApp', value: '+601123501201', href: 'https://wa.me/601123501201' },
-                            { icon: Mail, label: 'Email', value: 's.siamhossain.h@gmail.com', href: 'mailto:s.siamhossain.h@gmail.com' },
-                            { icon: Github, label: 'GitHub', value: 'github.com/siam-hossain-cmd', href: 'https://github.com/siam-hossain-cmd' },
-                            { icon: Linkedin, label: 'LinkedIn', value: 'linkedin.com/in/siam-hossain...', href: 'https://www.linkedin.com/in/siam-hossain-66295439b' },
-                            { icon: MapPin, label: 'Location', value: 'Dhaka, Bangladesh', href: null }
-                        ].map((item, i) => (
+                        {contactItems.map((item, i) => (
                             <a key={i} href={item.href || undefined} target={item.href && !item.href.startsWith('mailto') ? '_blank' : undefined} rel="noopener noreferrer" className="glass" style={{ padding: '16px', borderRadius: '12px', display: 'flex', alignItems: 'center', gap: '16px', textDecoration: 'none', cursor: item.href ? 'pointer' : 'default', transition: 'transform 0.2s' }} onMouseOver={e => item.href && (e.currentTarget.style.transform = 'translateX(8px)')} onMouseOut={e => e.currentTarget.style.transform = 'translateX(0)'}>
                                 <div style={{ padding: '12px', borderRadius: '8px', background: 'hsl(187 94% 43% / 0.1)', color: 'var(--accent)' }}>
                                     <item.icon size={22} />

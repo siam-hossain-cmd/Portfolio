@@ -42,7 +42,7 @@ export default function TestimonialsSection() {
                 animate={isInView ? "visible" : "hidden"}
                 style={{ maxWidth: '1200px', margin: '0 auto' }}
             >
-                <SectionHeader number="06" title="Testimonials" />
+                <SectionHeader number="05" title="Testimonials" />
 
                 <motion.div
                     variants={staggerContainer}

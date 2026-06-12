@@ -6,8 +6,6 @@ import AboutSection from './components/sections/AboutSection';
 import SkillsSection from './components/sections/SkillsSection';
 import ProjectsSection from './components/sections/ProjectsSection';
 import ServicesSection from './components/sections/ServicesSection';
-import ExperienceSection from './components/sections/ExperienceSection';
-import TestimonialsSection from './components/sections/TestimonialsSection';
 import ProcessSection from './components/sections/ProcessSection';
 import ContactSection from './components/sections/ContactSection';
 import { useTheme } from './context/ThemeContext';
@@ -30,8 +28,6 @@ function App() {
             <SkillsSection isDarkMode={isDarkMode} />
             <ProjectsSection isDarkMode={isDarkMode} />
             <ServicesSection />
-            <ExperienceSection />
-            <TestimonialsSection />
             <ProcessSection />
             <ContactSection />
             <Footer isDarkMode={isDarkMode} />

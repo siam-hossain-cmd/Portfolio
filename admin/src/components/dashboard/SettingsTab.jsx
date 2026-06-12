@@ -8,7 +8,7 @@ import { showToast } from '../ui/Toast';
 
 const defaultSettings = {
     personalInfo: { name: '', title: '', bio: '', profileImage: '', roles: [] },
-    socialLinks: { github: '', linkedin: '', twitter: '', website: '', whatsapp: '', email: '' },
+    socialLinks: { github: '', linkedin: '', twitter: '', website: '', whatsapp: '', email: '', facebook: '' },
     resumeUrl: '',
     seo: { siteTitle: '', siteDescription: '', ogImage: '', keywords: '' },
     contactInfo: { email: '', phone: '', location: '', availability: '' },
